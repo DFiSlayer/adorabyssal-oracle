@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Adorabyssal">
-<meta name="description" content="A 36-card cryptid oracle deck with AI-powered readings">
+<meta name="description" content="A 36-card cryptid oracle deck">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.svg">
+<link rel="apple-touch-icon" href="icon-512.svg">
 <title>Adorabyssal Oracle</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -17,57 +17,41 @@
 body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min-height:100vh;overflow-x:hidden}
 #starfield{position:fixed;inset:0;pointer-events:none;z-index:0}
 
-/* TABS */
 #tabbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;background:#080810;border-bottom:1px solid #b8860b33}
 .tab-btn{flex:1;padding:14px 4px;background:transparent;border:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;color:#444;cursor:pointer;transition:all .2s;text-transform:uppercase}
 .tab-btn.active{color:#b8860b;border-bottom:2px solid #b8860b;background:#b8860b11}
 
-/* SCREENS */
 .screen{display:none;padding-top:56px;min-height:100vh;position:relative;z-index:1}
 .screen.active{display:flex;flex-direction:column;align-items:center}
 
-/* HEADER */
 .deck-header{text-align:center;padding:24px 20px 12px}
 .deck-title{font-family:'Cinzel',serif;color:#b8860b;font-size:clamp(15px,4vw,20px);letter-spacing:4px;margin-bottom:4px}
 .deck-sub{color:#444;font-size:11px;letter-spacing:3px}
 .gold-line{width:180px;height:1px;background:linear-gradient(90deg,transparent,#b8860b44,transparent);margin:10px auto 16px}
 
-/* INPUT */
-.oracle-input-container{width:min(320px,85vw);margin-bottom:18px;text-align:center}
-.oracle-input{width:100%;padding:10px 14px;background:#0b0b14;border:1px solid #b8860b33;border-radius:6px;color:#f5e6c8;font-family:'Cormorant Garamond',serif;font-size:14px;text-align:center;outline:none;transition:border-color .3s,box-shadow .3s}
-.oracle-input:focus{border-color:#b8860b;box-shadow:0 0 10px #b8860b22}
-.oracle-input::placeholder{color:#555;font-style:italic;letter-spacing:1px}
-.intent-display{font-style:italic;color:#b8860b99;font-size:13px;margin:10px auto;max-width:280px;text-align:center;line-height:1.4;animation:glowReveal .5s ease}
-
 /* INTERPRETATION BOX */
 .interpretation-box{width:min(360px,92vw);background:#08080f;border:1px solid #b8860b22;padding:18px 16px;margin:14px 0 8px;border-radius:10px;box-shadow:0 4px 24px #000000cc;animation:glowReveal .6s ease}
-.int-title{font-family:'Cinzel',serif;font-size:11px;color:#b8860b;letter-spacing:3px;margin-bottom:10px;text-align:center;text-transform:uppercase}
-.int-text{font-size:15px;color:#d4c5a9;line-height:1.7;text-align:center}
-.int-text p{margin-bottom:10px}
-.int-text p:last-child{margin-bottom:0}
-.int-loading{display:flex;align-items:center;justify-content:center;gap:10px;color:#b8860b77;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px}
-.int-dot{width:6px;height:6px;border-radius:50%;background:#b8860b;animation:dotPulse 1.2s ease-in-out infinite}
-.int-dot:nth-child(2){animation-delay:.2s}
-.int-dot:nth-child(3){animation-delay:.4s}
-
-/* SPREAD INTERPRETATION */
+.int-title{font-family:'Cinzel',serif;font-size:10px;color:#b8860b;letter-spacing:3px;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.int-text{font-size:15px;color:#d4c5a9;line-height:1.75;text-align:center;font-style:italic}
 .spread-int-part{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #ffffff0d}
 .spread-int-part:last-child{margin-bottom:0;border-bottom:none;padding-bottom:0}
 .part-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;margin-bottom:6px;display:block}
-.part-text{font-size:14px;color:#c8b99a;line-height:1.65}
+.part-text{font-size:14px;color:#c8b99a;line-height:1.7;font-style:italic}
 
-/* MODE TOGGLE */
+/* ELEMENT TAG */
+.el-tag{display:inline-block;font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;padding:3px 10px;border-radius:12px;border:1px solid;margin-bottom:14px}
+
 .mode-toggle{display:flex;border:1px solid #b8860b44;border-radius:8px;overflow:hidden;margin-bottom:20px}
 .mode-btn{padding:9px 18px;background:transparent;border:none;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:#444;cursor:pointer;transition:all .2s}
 .mode-btn.active{background:#b8860b22;color:#b8860b}
 
-/* CARDS */
 .card-wrap{perspective:800px;margin-bottom:16px}
 .card{width:min(230px,72vw);border-radius:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;padding:16px 14px 12px;position:relative;overflow:hidden;transition:transform .28s ease;user-select:none}
 .card-back{height:min(340px,106vw);background:linear-gradient(135deg,#0d0d1a 0%,#1a0a2e 50%,#0d0d1a 100%);border:2px solid #b8860b;box-shadow:0 0 30px #b8860b55,inset 0 0 30px #00000088;justify-content:center;gap:10px}
+.card-back:active{transform:scale(0.97)}
 .card-back-icon{font-size:clamp(36px,10vw,52px);filter:drop-shadow(0 0 8px gold)}
 .card-back-label{font-family:'Cinzel',serif;color:#b8860b;font-size:12px;letter-spacing:3px;text-align:center;line-height:1.6}
-.card-back-hint{font-family:'Cormorant Garamond',serif;color:#555;font-size:11px;letter-spacing:2px}
+.card-back-hint{font-family:'Cormorant Garamond',serif;color:#b8860b66;font-size:12px;letter-spacing:2px;font-style:italic}
 .card-face{border:2px solid;min-height:min(420px,131vw)}
 .cf-top{text-align:center;width:100%;margin-bottom:8px}
 .cf-el-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
@@ -83,6 +67,7 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
 .cf-lore{font-size:clamp(11px,3.2vw,13px);color:#aaa;line-height:1.55;text-align:center;margin-top:10px;padding:8px 4px;border-top:1px solid #ffffff11}
 .cf-bottom{text-align:center;margin-top:8px}
 .cf-num{font-size:9px;color:#444;letter-spacing:2px}
+
 .ghost-btn{background:transparent;border:1px solid #b8860b55;color:#b8860b;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;padding:9px 22px;cursor:pointer;border-radius:4px;transition:all .2s;margin-bottom:8px}
 .ghost-btn:active{background:#b8860b22}
 .browse-nav{display:flex;align-items:center;gap:16px;margin-top:8px}
@@ -114,21 +99,20 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
 .sc-badge{font-size:6px;padding:1px 4px;border-radius:8px;border:1px solid;font-family:'Cinzel',serif;letter-spacing:.5px}
 .sc-lore{font-size:clamp(8px,2.2vw,10px);color:#999;line-height:1.4;text-align:center;margin-top:5px;padding-top:5px;border-top:1px solid #ffffff0f}
 .sc-num{font-size:7px;color:#444;letter-spacing:1px;font-family:'Cinzel',serif;margin-top:4px}
+
 .controls{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;padding:0 16px}
 .primary-btn{padding:11px 24px;border:1px solid #b8860b;color:#b8860b;background:transparent;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;cursor:pointer;border-radius:4px;transition:all .2s}
 .primary-btn:active{background:#b8860b22}
 .primary-btn:disabled{opacity:.3;cursor:not-allowed}
 
-/* INSTALL BANNER */
-#install-banner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0d0d1a;border-top:1px solid #b8860b44;padding:12px 16px;flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
-#install-banner span{font-family:'Cormorant Garamond',serif;font-size:13px;color:#b8860b99;flex:1}
-#install-banner button{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;padding:7px 14px;border-radius:4px;cursor:pointer}
-#install-yes{background:#b8860b22;border:1px solid #b8860b;color:#b8860b}
-#install-no{background:transparent;border:1px solid #333;color:#444}
+/* INSTALL BUTTON */
+#install-wrap{margin-top:24px;padding-bottom:32px;text-align:center;display:none;flex-direction:column;align-items:center;gap:8px}
+#install-btn{background:#b8860b11;border:1px solid #b8860b55;color:#b8860b;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;padding:10px 24px;border-radius:4px;cursor:pointer;transition:all .2s}
+#install-btn:active{background:#b8860b22}
+#install-hint{font-size:11px;color:#333;font-style:italic;letter-spacing:1px;max-width:240px;line-height:1.5}
 
 @keyframes slotSpin{0%{transform:translateY(-3px);opacity:.6}50%{transform:translateY(3px);opacity:1}100%{transform:translateY(-3px);opacity:.6}}
 @keyframes glowReveal{0%{opacity:0;transform:scale(0.95)}100%{opacity:1;transform:scale(1)}}
-@keyframes dotPulse{0%,80%,100%{transform:scale(0);opacity:.3}40%{transform:scale(1);opacity:1}}
 .spinning-anim{animation:slotSpin .1s linear infinite}
 .reveal-anim{animation:glowReveal .4s ease forwards}
 </style>
@@ -139,6 +123,7 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
 <div id="tabbar">
   <button class="tab-btn active" onclick="switchTab('single',this)">⟡ Single Draw</button>
   <button class="tab-btn" onclick="switchTab('spread',this)">✦ 3-Card Spread</button>
+  <button class="tab-btn" onclick="switchTab('browse',this)">☰ Browse</button>
 </div>
 
 <!-- SINGLE DRAW -->
@@ -148,20 +133,12 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
     <div class="deck-sub">36-CARD CRYPTID DECK</div>
   </div>
   <div class="gold-line"></div>
-  <div class="oracle-input-container" id="single-input-wrap">
-    <input type="text" id="single-question" class="oracle-input" placeholder="Whisper your query to the void...">
-  </div>
-  <div id="single-intent" class="intent-display" style="display:none"></div>
-  <div class="mode-toggle">
-    <button class="mode-btn active" id="btn-draw-mode" onclick="setMode('draw')">⟡ Draw</button>
-    <button class="mode-btn" id="btn-browse-mode" onclick="setMode('browse')">☰ Browse</button>
-  </div>
-  <div id="draw-area" class="card-wrap">
+  <div class="card-wrap">
     <div class="card card-back" id="card-back" onclick="drawCard()">
       <div class="card-back-icon">🌀</div>
       <div class="card-back-label">ADORABYSSAL<br>ORACLE</div>
       <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,#b8860b,transparent)"></div>
-      <div class="card-back-hint">DRAW A CARD</div>
+      <div class="card-back-hint">tap to draw</div>
     </div>
     <div class="card card-face" id="card-face" style="display:none"></div>
   </div>
@@ -170,17 +147,13 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
     <div class="int-text" id="interpretation-text"></div>
   </div>
   <button class="ghost-btn" id="draw-again-btn" style="display:none" onclick="resetDraw()">↩ DRAW AGAIN</button>
-  <div id="browse-area" style="display:none;flex-direction:column;align-items:center;gap:12px">
-    <div class="card card-face" id="browse-card"></div>
-    <div class="browse-nav">
-      <button class="nav-btn" onclick="browseNav(-1)">‹</button>
-      <span class="nav-count" id="browse-count">1 / 36</span>
-      <button class="nav-btn" onclick="browseNav(1)">›</button>
-    </div>
-  </div>
   <div class="history-section" id="history-section" style="display:none">
     <div class="history-label">RECENT DRAWS</div>
     <div class="history-chips" id="history-chips"></div>
+  </div>
+  <div id="install-wrap">
+    <button id="install-btn" onclick="doInstall()">📲 INSTALL APP</button>
+    <div id="install-hint">Add to your home screen for instant access</div>
   </div>
 </div>
 
@@ -191,10 +164,6 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
     <div class="deck-sub">THREE-CARD SPREAD</div>
   </div>
   <div class="gold-line"></div>
-  <div class="oracle-input-container" id="spread-input-wrap">
-    <input type="text" id="spread-question" class="oracle-input" placeholder="What secrets shall the spread lay bare?">
-  </div>
-  <div id="spread-intent" class="intent-display" style="display:none"></div>
   <div class="spread-cards">
     <div class="spread-slot">
       <div class="spread-pos-label" style="color:#9333EA;text-shadow:0 0 8px #9333EA66">Past</div>
@@ -221,16 +190,25 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
   </div>
   <div class="controls">
     <button class="primary-btn" id="draw-spread-btn" onclick="drawSpread()">✦ DRAW SPREAD</button>
-    <button class="primary-btn" id="reset-spread-btn" style="display:none;border-color:#555;color:#aaa" onclick="resetSpread()">↩ CLEAR SPREAD</button>
+    <button class="primary-btn" id="reset-spread-btn" style="display:none;border-color:#555;color:#aaa" onclick="resetSpread()">↩ CLEAR</button>
   </div>
   <div style="height:32px"></div>
 </div>
 
-<!-- INSTALL BANNER -->
-<div id="install-banner">
-  <span>📲 Install Adorabyssal Oracle to your home screen</span>
-  <button id="install-yes" onclick="doInstall()">INSTALL</button>
-  <button id="install-no" onclick="dismissInstall()">✕</button>
+<!-- BROWSE SCREEN -->
+<div class="screen" id="screen-browse">
+  <div class="deck-header">
+    <div class="deck-title">ADORABYSSAL ORACLE</div>
+    <div class="deck-sub">BROWSE ALL 36 CARDS</div>
+  </div>
+  <div class="gold-line"></div>
+  <div class="card card-face" id="browse-card" style="min-height:min(420px,131vw)"></div>
+  <div class="browse-nav" style="margin-top:12px">
+    <button class="nav-btn" onclick="browseNav(-1)">‹</button>
+    <span class="nav-count" id="browse-count">1 / 36</span>
+    <button class="nav-btn" onclick="browseNav(1)">›</button>
+  </div>
+  <div style="height:32px"></div>
 </div>
 
 <script>
@@ -239,43 +217,154 @@ const CARDS=[
 {id:1,name:"Alkonost",keyword:"Distraction",symbol:"🦅",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#B91C1C",lore:"A Slavic half-bird, half-woman with a spellbinding voice. Those who hear it forget and abandon everything else. She can cause thunderstorms by laying eggs that roll into the ocean and hatch after seven days."},
 {id:2,name:"Anansi",keyword:"Story",symbol:"🕷️",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#A855F7",lore:"A trickster spider god from Akan folktales, considered the spirit of all stories and knowledge. Associated with skill at speechcraft and seen as a symbol of slave resistance and survival."},
 {id:3,name:"Bækhest",keyword:"Glamour",symbol:"🐎",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#92400E",lore:"A Scandinavian brook horse similar to a Kelpie — an unnaturally glamorous white horse appearing near rivers in fog. Anyone who climbs on becomes stuck and is dragged into the river."},
-{id:4,name:"Bake-Kujira",keyword:"Misfortune",symbol:"🐋",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#6B21A8",lore:"A floating Japanese ghost whale that cannot be caught and brings a curse and misfortune wherever it goes. Appears as the skeleton of a great baleen whale, accompanied by strange birds and unknown fish."},
+{id:4,name:"Bake-Kujira",keyword:"Misfortune",symbol:"🐋",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#6B21A8",lore:"A floating Japanese ghost whale that cannot be caught and brings a curse wherever it goes. Appears as the skeleton of a great baleen whale, accompanied by strange birds and unknown fish."},
 {id:5,name:"Bigfoot",keyword:"Solitude",symbol:"🦶",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#3F6212",lore:"From North American folklore, particularly the Pacific Northwest. A hairy, upright-walking ape creature between six and nine feet tall, wandering forests and leaving massive footprints."},
-{id:6,name:"Black Shuck",keyword:"Omen",symbol:"🐾",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#78716C",lore:"A ghostly black dog from East Anglia with one fiery evil eye. Its most notorious appearance: bursting through church doors with a clap of thunder, leaving scorch marks and causing the steeple to collapse."},
-{id:7,name:"Cadejo",keyword:"Duality",symbol:"🐺",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#6366F1",lore:"A pair of spirits from Central American folklore — one a protector, the other a malevolent being luring people to bad choices. Which is good and which is evil swaps depending on the source. Together they represent duality."},
+{id:6,name:"Black Shuck",keyword:"Omen",symbol:"🐾",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#78716C",lore:"A ghostly black dog from East Anglia with one fiery evil eye. Burst through church doors with a clap of thunder, leaving scorch marks and causing the steeple to collapse. Its presence is an omen."},
+{id:7,name:"Cadejo",keyword:"Duality",symbol:"🐺",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#6366F1",lore:"A pair of spirits from Central American folklore — one a protector, the other a malevolent being luring people to bad choices. Which is good and which is evil swaps by source. Together they represent duality."},
 {id:8,name:"Cait Sidhe",keyword:"Theft",symbol:"🐱",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#8B5CF6",lore:"A spectral Celtic fairie creature haunting the Scottish highlands. Appears as a large black cat with a white chest spot. Rumored to steal the souls of the dead before burial."},
 {id:9,name:"Cerberus",keyword:"Duty",symbol:"🐕",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#991B1B",lore:"From Greek mythology — usually three-headed with a serpent for a tail and snakes protruding from its body. Guards the gates of the underworld to prevent the dead from leaving."},
 {id:10,name:"Chupacabra",keyword:"Consume",symbol:"🦎",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#7C3AED",lore:"A cryptid with sightings in Puerto Rico, Chile, and across the southern US and Mexico. Reported to prey on livestock, draining them of blood and organs, leaving three puncture wounds as evidence."},
-{id:11,name:"Demon",keyword:"Chaos",symbol:"🔱",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#581C87",lore:"Originally a divine Greek being, now recognized as a malevolent entity born of human sin. Heavily associated with goat-men (satyrs), said to corrupt and lead astray the souls of men."},
+{id:11,name:"Demon",keyword:"Chaos",symbol:"🔱",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#581C87",lore:"Originally a divine Greek being, now a malevolent entity born of human sin. Associated with goat-men (satyrs), said to corrupt and lead astray the souls of men."},
 {id:12,name:"Dullahan",keyword:"Inevitability",symbol:"☠️",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#6B7280",lore:"From Irish mythology — a headless rider on a black horse, holding its own head under one arm. All gates open before it; when it stops, a human dies. It speaks only once per journey, to call the name of the doomed."},
 {id:13,name:"Fairie",keyword:"Trickery",symbol:"🧚",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#065F46",lore:"A mythical creature from European folklore — a magical being associated with trickery and the need to be warded off. Pre-Victorian depictions: diminutive and wingless, able to change its appearance and size."},
-{id:14,name:"Fuath",keyword:"Malice",symbol:"👾",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#064E3B",lore:"A malevolent Gaelic water spirit resembling a gremlin. Delights in causing drownings by sabotaging boats. Vulnerable to steel and sunlight — only comes out at night. Humanoid with webbed toes, a spiky tail, and a shaggy mane."},
-{id:15,name:"Ghost",keyword:"Endure",symbol:"👻",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#92400E",lore:"A generic soul or spirit of the dead that appears to the living. Depiction varies — translucent or glowing presence associated with the afterlife. Often considered a restless spirit unable to move on."},
-{id:16,name:"Grootslang",keyword:"Cruelty",symbol:"🐘",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#9B4D4D",lore:"An ancient creature as old as the world, made by mistake before the gods had experience. Split into elephants and snakes, one original escaped. Lives deep in a South African cave filled with diamonds. Impossibly strong and cruel — overcome only by appealing to its greed."},
+{id:14,name:"Fuath",keyword:"Malice",symbol:"👾",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#064E3B",lore:"A malevolent Gaelic water spirit resembling a gremlin. Delights in causing drownings by sabotaging boats. Vulnerable to steel and sunlight — only comes out at night."},
+{id:15,name:"Ghost",keyword:"Endure",symbol:"👻",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#92400E",lore:"A generic soul or spirit of the dead that appears to the living. Associated with the afterlife. Often a restless spirit that refuses to be extinguished, enduring beyond the body's end."},
+{id:16,name:"Grootslang",keyword:"Cruelty",symbol:"🐘",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#9B4D4D",lore:"An ancient creature made by mistake before the gods had experience. Split into elephants and snakes, one original escaped. Lives deep in a South African cave filled with diamonds. Impossibly strong and cruel — overcome only by appealing to its greed."},
 {id:17,name:"Huginn & Muninn",keyword:"Knowledge",symbol:"🪶",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#374151",lore:"Named after Thought and Memory — a pair of ravens from Norse Mythology that fly across the world daily and report back to Odin. Through them, Odin maintains his wisdom and knowledge of all things."},
-{id:18,name:"Hydra",keyword:"Struggle",symbol:"🐍",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#134E4A",lore:"A multi-headed serpent from Greek mythology whose lair was a lake thought to be an entrance to the underworld. Cut off one head and two grow back. Its blood was dangerously poisonous."},
-{id:19,name:"Ifrit",keyword:"Power",symbol:"😈",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#C2410C",lore:"A Middle Eastern Jinn, often depicted as the most powerful of them — wicked and ruthless. Said to inhabit the underworld with fiery flames leaping from its mouth."},
+{id:18,name:"Hydra",keyword:"Struggle",symbol:"🐍",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#134E4A",lore:"A multi-headed serpent from Greek mythology. Cut off one head and two grow back. Its lair was a lake thought to be an entrance to the underworld. Its blood was dangerously poisonous."},
+{id:19,name:"Ifrit",keyword:"Power",symbol:"😈",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#C2410C",lore:"A Middle Eastern Jinn, often the most powerful of them — wicked and ruthless. Said to inhabit the underworld with fiery flames leaping from its mouth."},
 {id:20,name:"Jersey Devil",keyword:"Invulnerability",symbol:"👹",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#9B1C1C",lore:"From the Pine Barrens of Southern New Jersey — the thirteenth child of Jane Leeds, transformed into a hooved winged creature at birth. Emits an unearthly shriek and is said to be impossible to kill."},
 {id:21,name:"Kitsune",keyword:"Wisdom",symbol:"🦊",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#1E3A8A",lore:"A Japanese spirit fox with the ability to shapeshift into human form. Depicted as trickster, guardian, friend, and lover. The more tails a Kitsune has — up to nine — the older and wiser it is considered to be."},
 {id:22,name:"Kraken",keyword:"Mystery",symbol:"🐙",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#4338CA",lore:"A giant sea cephalopod said to lurk off Norway and Greenland. So massive it has been mistaken for an island. When it submerges it leaves giant whirlpools capable of sinking ships."},
 {id:23,name:"Lampad",keyword:"Companionship",symbol:"🕯️",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#86198F",lore:"Nymphs of the underworld from Greek Mythology, meant to accompany Hecate and light her way. They carry torches with the power to drive mortals into madness."},
 {id:24,name:"Leviathan",keyword:"Envy",symbol:"🌊",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#0369A1",lore:"A giant sea monster from Jewish belief — a monstrous serpent to be killed at the end of time. Described by St. Thomas Aquinas as the demon of Envy, corresponding to the deadly sin."},
 {id:25,name:"Mermaid",keyword:"Commitment",symbol:"🧜",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#1E3A5F",lore:"A creature from the folklore of multiple cultures, depicted as female with a fish's tail. If a mermaid falls in love and her man weds another, she turns to sea foam. If they marry and he is unfaithful, he will die."},
-{id:26,name:"Mothman",keyword:"Ruin",symbol:"🦟",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#7F1D1D",lore:"A cryptid from West Virginia folklore — a dark birdlike humanoid with oversized glowing red eyes and a large wingspan. Associated with supernatural events in the mid-sixties ending with the collapse of the Silver Bridge."},
+{id:26,name:"Mothman",keyword:"Ruin",symbol:"🦟",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#7F1D1D",lore:"A cryptid from West Virginia folklore — a dark birdlike humanoid with oversized glowing red eyes and a large wingspan. Associated with supernatural events ending with the collapse of the Silver Bridge."},
 {id:27,name:"Namazu",keyword:"Control",symbol:"🐟",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#7C2D12",lore:"A giant catfish from Japanese mythology living in the mud under Japan, restrained by the god Kashima with a stone. When Kashima is distracted, Namazu thrashes and causes violent earthquakes."},
 {id:28,name:"Nessie",keyword:"Longevity",symbol:"🦕",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#0E7490",lore:"The Loch Ness Monster from Scottish folklore — often depicted as a plesiosaur with a long neck and small head. Sightings date back to the sixth century, making Nessie very long lived indeed."},
-{id:29,name:"Olgoi-Khorkhoi",keyword:"Virulence",symbol:"🪱",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#9F1239",lore:"The Mongolian Death Worm. A giant red worm claimed to live in the Gobi Desert with no head or legs — impossibly poisonous, capable of spraying venom and electricity, traveling underground."},
+{id:29,name:"Olgoi-Khorkhoi",keyword:"Virulence",symbol:"🪱",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#9F1239",lore:"The Mongolian Death Worm. A giant red worm from the Gobi Desert with no head or legs — impossibly poisonous, capable of spraying venom and electricity, traveling underground."},
 {id:30,name:"Olitiau",keyword:"Expanse",symbol:"🦇",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#BE185D",lore:"From Central Africa — claimed to be gigantic bats lurking in caverns with big black bodies, long teeth, and six to twelve foot wingspans. One explorer called it the granddaddy of all bats."},
 {id:31,name:"Phoenix",keyword:"Rebirth",symbol:"🔥",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#DC2626",lore:"A regenerative bird from Greek mythology that dies in a combustion of flame and is reborn from the ash. Red and yellow coloration, ranging in size from eagle to ostrich."},
-{id:32,name:"Rusalka",keyword:"Constrained",symbol:"💀",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#164E63",lore:"A female water entity from Eastern Slavic folklore. Originally believed to help crops grow, they later became vengeful undead spirits lurking near rivers and entangling young men with their long red hair to drown them."},
-{id:33,name:"Sleipnir",keyword:"Swiftness",symbol:"🏇",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#4C1D95",lore:"Odin's horse from Norse Mythology, depicted with eight legs and incredible speed. An offspring of Loki with a connection to the underworld. Described as the best horse among gods and men."},
+{id:32,name:"Rusalka",keyword:"Constrained",symbol:"💀",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#164E63",lore:"A female water entity from Eastern Slavic folklore — vengeful undead spirits lurking near rivers, entangling young men with their long red hair to drown them."},
+{id:33,name:"Sleipnir",keyword:"Swiftness",symbol:"🏇",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#4C1D95",lore:"Odin's horse from Norse Mythology, depicted with eight legs and incredible speed. An offspring of Loki with a connection to the underworld. The best horse among gods and men."},
 {id:34,name:"Tsuchinoko",keyword:"Lies",symbol:"🐛",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#14532D",lore:"A Western Japanese being resembling a hoop snake. Sometimes takes its tail in its mouth and rolls around. Able to double jump, with an affinity for lying and a taste for alcohol."},
-{id:35,name:"Will-O'-The-Wisp",keyword:"Guidance",symbol:"✨",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#1D4ED8",lore:"A widely shared tale of a flickering orb of light said to be a spirit guiding travellers — sometimes to ill fate, sometimes to good. Often associated with fairies, goblins, and hauntings."},
+{id:35,name:"Will-O'-The-Wisp",keyword:"Guidance",symbol:"✨",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#1D4ED8",lore:"A flickering orb of light said to be a spirit guiding travellers — sometimes to ill fate, sometimes to good. Often associated with fairies, goblins, and hauntings."},
 {id:36,name:"Wolpertinger",keyword:"Diversity",symbol:"🐇",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#1E40AF",lore:"A diverse creature from Bavarian folklore with a composite body — squirrel body, pheasant wings, rabbit head, and deer antlers. Claims to inhabit the alpine forests of Bavaria."}
 ];
 
 const POSITIONS=[{label:"Past",accent:"#9333EA"},{label:"Present",accent:"#D97706"},{label:"Future",accent:"#16A34A"}];
-const ELEMENT_ASSOC={Fire:"Action, passion, desire, energy, destruction",Air:"Thought, travel, intellect, communication, divination",Earth:"Stability, prosperity, home, nature, endurance",Water:"Emotions, dreams, love, healing, rest"};
+
+// ── INTERPRETATIONS ────────────────────────────────────────────────────────
+// Rich, card-specific readings keyed by card id and positivity
+// Falls back to element+positivity if no specific entry
+
+const SPECIFIC = {
+  // Each entry: [positive_text, neutral_text, negative_text] — pick by card.positivity
+  1:  {Neutral:  "The Alkonost sings over you now — something beautiful, distracting, magnetic is pulling your attention from what matters. This is not a warning to resist pleasure, but to notice what you are forgetting while you listen. Return to yourself when the song fades."},
+  2:  {Positive: "Anansi is spinning a thread through your life right now, weaving scattered moments into something meaningful. You are either in the middle of telling an important story, or it is time to begin one. Your words have more power than you currently believe."},
+  3:  {Positive: "The Bækhest appears dazzling and irresistible — and something in your world shares that quality right now. Beauty is real here, but so is the pull beneath the surface. Appreciate what shines without surrendering your footing entirely."},
+  4:  {Negative: "Bake-Kujira drifts through your waters — an invisible weight, a current of bad luck that seems to follow without cause. Do not force outcomes right now. The ghost whale passes; it does not stay forever. Let it move on without chasing it."},
+  5:  {Neutral:  "Bigfoot walks alone through ancient forests, leaving only prints as evidence. There is something in your life that requires solitude right now — a withdrawal that is not defeat, but necessary space. Your absence can be as powerful as your presence."},
+  6:  {Neutral:  "Black Shuck stands at the threshold, one eye burning. Something is ending or changing around you, and this creature marks the transition. An omen is not a sentence — it is an invitation to pay attention to what you might otherwise walk past."},
+  7:  {Neutral:  "The Cadejo walks on both sides of you — the protector and the tempter, indistinguishable in the dark. A duality is alive in your current situation. Two paths, two motivations, two truths at once. Hold both without forcing a resolution."},
+  8:  {Negative: "Cait Sidhe slips between the gravestones, taking what is not freely given. Something is being taken from you — energy, credit, time, peace — often by something you cannot quite name. Protect what is yours before crossing this threshold."},
+  9:  {Neutral:  "Cerberus does not leave his post. Whatever obligation, boundary, or duty stands before you — it is real, it is yours, and it cannot be passed off to another. There is honour in holding your station, even when no one is watching."},
+  10: {Negative: "The Chupacabra drains without remorse. Something in your world is consuming more than its share — your energy, your time, your resources. It may be a situation, a habit, or a dynamic. Name what is feeding on you and take your distance."},
+  11: {Neutral:  "The Demon does not force — it whispers. Chaos is not breaking in from outside; it is arising from within the cracks already present. Do not add pressure to a system already straining. This is a moment for stillness, not action."},
+  12: {Neutral:  "The Dullahan rides, and it will arrive when it arrives. Something in your life is running on its own timetable, immune to your urgency. Resistance is futile here — but preparation is not. Use the time before it stops to set your affairs in order."},
+  13: {Negative: "The Fairie is mischievous and glamorous, but its intent is not your wellbeing. Something around you is not what it appears. A situation, a flattery, an offer — it carries a hidden clause. Look past the shimmer before you commit."},
+  14: {Negative: "Fuath sabotages quietly, beneath the waterline, in the dark. Something is being undermined — plans, trust, foundations. This damage may be subtle enough that you haven't named it yet. Look at what keeps sinking without clear reason."},
+  15: {Positive: "The Ghost endures. It has lost its body, its life, its certainty — and still it remains. Whatever difficulty you are carrying, the card asks: what in you simply refuses to be extinguished? That stubborn persistence is your greatest asset right now."},
+  16: {Negative: "The Grootslang is ancient, cunning, and cruel — but it has one weakness. Pure greed can be bargained with. If something or someone is blocking you with seemingly impossible power, look for what they want most. Offer that, and the path may open."},
+  17: {Positive: "Huginn and Muninn return to Odin each day with everything they have witnessed. Knowledge is circling back to you now — through memory, through research, through a conversation you almost skipped. Pay close attention to what arrives unsolicited."},
+  18: {Negative: "The Hydra multiplies when attacked directly. Whatever struggle you are engaged in, brute force is not the answer — cutting at it head-on only creates more problems. Step back. Find the source. Address the root, not the symptoms."},
+  19: {Neutral:  "The Ifrit holds tremendous power — and power without direction becomes destruction. Something potent is available to you, but the question is not whether you can use it. The question is whether you should, and toward what end."},
+  20: {Positive: "The Jersey Devil cannot be killed. It has been hunted, doubted, feared, and still it screams through the pines. Something in your life shares this quality — an aspect of you, a dream, a bond that simply will not be extinguished no matter what."},
+  21: {Positive: "The Kitsune shapeshifts, accumulates tails, grows wiser with each transformation. What appears to be inconsistency in you is actually evolution. You are not the same as you were, and that is precisely your strength. Trust the accumulated wisdom."},
+  22: {Neutral:  "The Kraken lurks below the surface, too vast to be seen whole. Something in your life resists being fully known — a situation, a person, perhaps yourself. Do not demand total clarity. Navigate carefully around what you cannot yet see."},
+  23: {Positive: "The Lampad carries her torch through the underworld so another does not walk in darkness. You are not alone in this — or you are being called to be the light for someone else. Companionship in difficult passages is both a gift and a calling."},
+  24: {Negative: "Leviathan is the demon of Envy — a hunger for what belongs to another. Something coveted is distorting your vision of what you already have. Or someone's envy is creating turbulence around you. Either way, the sea is rough because of wanting."},
+  25: {Positive: "The Mermaid commits absolutely — and that commitment has consequences either way. A bond you have made, or are considering, carries real weight. Honour it fully or release it cleanly. There is no comfortable middle water here."},
+  26: {Negative: "Mothman appears before collapse. It is not the cause — it is the warning. Something around you is structurally unsound: a plan, a relationship, an assumption you have built on. It has not fallen yet, but the cracks are visible if you look."},
+  27: {Neutral:  "Namazu stirs beneath the surface, restrained only by the attention of a god. Something powerful is being held in check right now — by discipline, by circumstance, by someone else's will. The moment that attention slips, things will shift violently."},
+  28: {Positive: "Nessie has been glimpsed for centuries and never caught. Longevity is not about being understood — it is about enduring through doubt. Something in your life has already survived far more than it is being given credit for. Trust its staying power."},
+  29: {Negative: "The Mongolian Death Worm poisons everything it touches, seen or unseen. A toxic element is present — it may be invisible, underground, unacknowledged. Do not assume safety simply because the danger hasn't surfaced. Keep your distance."},
+  30: {Neutral:  "The Olitiau spreads its twelve-foot wingspan in the dark of vast caverns. You are standing at the edge of something enormous — a space, a possibility, a scope you may not have thought yourself ready for. The expanse is real. So is your capacity to fill it."},
+  31: {Positive: "The Phoenix does not rise despite the burning — it rises because of it. Whatever has recently ended, collapsed, or been consumed was not destruction. It was preparation. The ash is fertile. What comes next will be unrecognizable from what came before."},
+  32: {Negative: "The Rusalka is bound to the water that holds her grief. Something constrains you — an old wound, an obligation, a pattern that wraps itself around your movement like red hair in a current. Name what holds you. Naming it is the first step to surfacing."},
+  33: {Neutral:  "Sleipnir runs on eight legs across realms that ordinary horses cannot cross. Speed is available to you — but so is the crossing of thresholds between worlds. Movement right now is not just physical. You are passing between one phase and another."},
+  34: {Negative: "The Tsuchinoko has an affinity for lying — and it rolls in circles. Something in your current situation is not straight. A story being told — to you, or by you — contains a bend. Look for what is curving away from honesty before it doubles back."},
+  35: {Positive: "The Will-O'-The-Wisp flickers ahead through the marsh, and though its guidance is unpredictable, those who follow it with open eyes often find their way through. Something unexpected is pointing toward the right direction. Trust the light, even if the path looks strange."},
+  36: {Positive: "The Wolpertinger is made of pieces that should not coexist — and yet here it is, entirely itself. What you believe to be contradictions within you are not flaws. They are the exact combination that makes you capable of things no single-natured creature could achieve."}
+};
+
+// Element+Positivity fallbacks (used when no specific entry)
+const FALLBACK = {
+  Fire: {
+    Positive: "The fire element burns in your favour — there is real energy available to you right now. Something that has been waiting for momentum can move. Act with intention rather than impulse, and the flame will carry you.",
+    Neutral:  "Fire is present but undirected. Power without a target can consume what it was meant to illuminate. Find what you are actually trying to burn away, and what you are trying to warm. The distinction matters.",
+    Negative: "The fire is burning something it shouldn't. An energy or passion in your life has become destructive — either aimed inward or outward without wisdom. Let it die down before it takes something you cannot rebuild."
+  },
+  Air: {
+    Positive: "Clear air moves through your current situation — thought is sharp, communication can be trusted, and the words you have been searching for are closer than they appear. This is a moment for honest conversation.",
+    Neutral:  "Air carries things in both directions. Information is moving around you — some of it useful, some of it noise. Discern carefully. Not every wind that reaches you is worth following.",
+    Negative: "Something in the air is distorted — a miscommunication, a deception, a thought pattern that keeps circling without landing anywhere useful. Do not trust the first version of what you hear, including your own inner voice."
+  },
+  Earth: {
+    Positive: "The earth holds firm beneath you. Whatever is being built right now has solid ground to stand on. Stability is not stagnation — it is the condition that allows real growth to take root. Trust what you have already laid down.",
+    Neutral:  "Earth asks for patience. Whatever you are tending — a plan, a relationship, a healing — it is in the ground, not yet visible. The absence of visible progress does not mean nothing is happening beneath the surface.",
+    Negative: "The ground beneath you is less stable than it appears. Something that seemed solid is shifting. This is not the moment to build upward — it is the moment to examine the foundation and shore up what is cracking."
+  },
+  Water: {
+    Positive: "The water flows clearly right now — emotion, intuition, and healing are moving in the right direction. Something that has been blocked is releasing. Let yourself feel what surfaces without immediately trying to analyse it away.",
+    Neutral:  "Still water holds depths. What you see on the surface of your current situation is not the whole picture. Something significant lies below the waterline — in your own feelings, or in a situation that is calmer than it looks.",
+    Negative: "The water is turbulent or stagnant — emotion is either flooding everything or has gone completely still in an unhealthy way. Neither extreme serves you. Find the drainage point, or find the source of the blockage."
+  }
+};
+
+function getReading(card) {
+  if (SPECIFIC[card.id] && SPECIFIC[card.id][card.positivity]) {
+    return SPECIFIC[card.id][card.positivity];
+  }
+  return FALLBACK[card.element][card.positivity];
+}
+
+function getSpreadReading(cards) {
+  const posLabels = ['#9333EA','#D97706','#16A34A'];
+  const posNames  = ['The Foundation (Past)','The Nexus (Present)','The Horizon (Future)'];
+  const tones = [
+    // Past framing
+    (c) => {
+      const base = getReading(c);
+      const sentence = base.split('.')[0];
+      if (c.positivity === 'Positive') return `A foundation of ${c.keyword.toLowerCase()} has shaped your path here. ${sentence}. This energy set something in motion that is still reverberating.`;
+      if (c.positivity === 'Negative') return `Behind you lies the weight of ${c.keyword.toLowerCase()} — carried by ${c.name}. ${sentence}. Something from this chapter is still unresolved.`;
+      return `Your foundation holds the energy of ${c.keyword.toLowerCase()} through ${c.name}. ${sentence}. This background continues to colour what comes next.`;
+    },
+    // Present framing
+    (c) => {
+      const base = getReading(c);
+      const sentence = base.split('.')[0];
+      if (c.positivity === 'Positive') return `Right now, ${c.name} brings ${c.keyword.toLowerCase()} into your present. ${sentence}. This is the active current — work with it.`;
+      if (c.positivity === 'Negative') return `The present carries the challenge of ${c.keyword.toLowerCase()} via ${c.name}. ${sentence}. This is the friction point — acknowledge it clearly.`;
+      return `${c.name} defines your present moment with ${c.keyword.toLowerCase()}. ${sentence}. Equilibrium is possible, but it requires full awareness.`;
+    },
+    // Future framing
+    (c) => {
+      const base = getReading(c);
+      const sentence = base.split('.')[0];
+      if (c.positivity === 'Positive') return `The horizon opens toward ${c.keyword.toLowerCase()} — ${c.name} marks what is coming. ${sentence}. Move toward this with confidence.`;
+      if (c.positivity === 'Negative') return `${c.name} stands at the edge of your future, carrying ${c.keyword.toLowerCase()}. ${sentence}. Forewarned is forearmed — adjust now.`;
+      return `Your future holds the energy of ${c.keyword.toLowerCase()} through ${c.name}. ${sentence}. What you do now determines which face of this energy you meet.`;
+    }
+  ];
+
+  return cards.map((c, i) => `
+    <div class="spread-int-part">
+      <span class="part-title" style="color:${posLabels[i]}">${posNames[i]} · ${c.name}</span>
+      <div class="part-text">${tones[i](c)}</div>
+    </div>`).join('');
+}
 
 // ── STARS ──────────────────────────────────────────────────────────────────
 (function(){
@@ -299,6 +388,7 @@ function switchTab(tab,btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('screen-'+tab).classList.add('active');
   btn.classList.add('active');
+  if(tab==='browse') renderBrowseCard();
 }
 
 // ── CARD HTML ──────────────────────────────────────────────────────────────
@@ -312,146 +402,11 @@ function applyCardFace(el,card){
   el.style.boxShadow=`0 0 28px ${card.color}66,inset 0 0 20px #00000066`;
 }
 
-// ── AI READING (Claude API) ────────────────────────────────────────────────
-function loadingHTML(){
-  return`<div class="int-loading"><div class="int-dot"></div><div class="int-dot"></div><div class="int-dot"></div><span style="margin-left:6px">The void stirs...</span></div>`;
-}
-
-async function aiSingleReading(question, card){
-  const box=document.getElementById('interpretation-text');
-  box.innerHTML=loadingHTML();
-  document.getElementById('interpretation-area').style.display='block';
-
-  const prompt=`You are the Adorabyssal Oracle — a mystical, atmospheric divination voice that speaks with poetic gravity and genuine insight. You are reading for someone who has asked:
-
-"${question}"
-
-The card drawn is: ${card.name} (${card.keyword})
-Element: ${card.element} — associated with: ${ELEMENT_ASSOC[card.element]}
-Classification: ${card.classification}
-Positivity: ${card.positivity}
-Lore: ${card.lore}
-
-Give a genuine, personal, flowing oracle reading of 3–4 short paragraphs that:
-1. Opens with an evocative line connecting the creature's nature to the question
-2. Interprets the card's keyword and element in direct relation to their specific question
-3. Offers a concrete intuitive insight or guidance (not vague platitudes)
-4. Closes with a resonant, memorable line
-
-Speak in second person ("you", "your"). Be atmospheric but clear. Do not use asterisks or markdown. Do not list things. Write as continuous flowing prose.`;
-
-  try {
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:500,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data=await res.json();
-    const text=data.content?.[0]?.text||'The void is silent. Try again.';
-    box.innerHTML=text.split('\n\n').filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('');
-  } catch(e) {
-    box.innerHTML=`<p style="color:#9CA3AF;font-style:italic">The connection to the void was lost. Try again.</p>`;
-  }
-}
-
-async function aiSpreadReading(question, cards){
-  const box=document.getElementById('spread-interpretation-text');
-  box.innerHTML=loadingHTML();
-  document.getElementById('spread-interpretation-area').style.display='block';
-
-  const prompt=`You are the Adorabyssal Oracle — a mystical, atmospheric divination voice that speaks with poetic gravity and genuine insight. You are reading a Past · Present · Future spread for someone who has asked:
-
-"${question}"
-
-The three cards drawn are:
-PAST: ${cards[0].name} (${cards[0].keyword}, ${cards[0].element}, ${cards[0].positivity}) — ${cards[0].lore}
-PRESENT: ${cards[1].name} (${cards[1].keyword}, ${cards[1].element}, ${cards[1].positivity}) — ${cards[1].lore}
-FUTURE: ${cards[2].name} (${cards[2].keyword}, ${cards[2].element}, ${cards[2].positivity}) — ${cards[2].lore}
-
-Give a genuine, cohesive three-part oracle reading. For each position write 2–3 sentences that:
-- Connect the creature's actual folklore/nature to their question
-- Interpret the keyword and element meaningfully in context
-- Flow together as a coherent narrative arc (past shapes present, present shapes future)
-
-Format your response exactly as:
-PAST: [reading]
-PRESENT: [reading]
-FUTURE: [reading]
-
-Speak in second person. Be atmospheric but grounded. No asterisks or markdown. No generic platitudes — be specific to the cards drawn.`;
-
-  try {
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:600,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data=await res.json();
-    const text=data.content?.[0]?.text||'';
-    const colors=['#9333EA','#D97706','#16A34A'];
-    const labels=['The Foundation (Past)','The Nexus (Present)','The Horizon (Future)'];
-    const parts=text.split(/\n/).filter(l=>l.trim()).reduce((acc,line)=>{
-      const m=line.match(/^(PAST|PRESENT|FUTURE):\s*(.*)/i);
-      if(m) acc.push({pos:m[1].toUpperCase(),text:m[2]});
-      else if(acc.length) acc[acc.length-1].text+=' '+line.trim();
-      return acc;
-    },[]);
-
-    if(parts.length>=3){
-      box.innerHTML=parts.map((p,i)=>`
-        <div class="spread-int-part">
-          <span class="part-title" style="color:${colors[i]}">${labels[i]}</span>
-          <div class="part-text">${p.text}</div>
-        </div>`).join('');
-    } else {
-      // fallback: split by double newline
-      const chunks=text.split('\n\n').filter(c=>c.trim());
-      box.innerHTML=chunks.slice(0,3).map((c,i)=>`
-        <div class="spread-int-part">
-          <span class="part-title" style="color:${colors[i]}">${labels[i]}</span>
-          <div class="part-text">${c.replace(/^(PAST|PRESENT|FUTURE):\s*/i,'')}</div>
-        </div>`).join('');
-    }
-  } catch(e){
-    box.innerHTML=`<p style="color:#9CA3AF;font-style:italic">The connection to the void was lost. Try again.</p>`;
-  }
-}
-
 // ── SINGLE DRAW ────────────────────────────────────────────────────────────
-let drawMode='draw',browseIdx=0,drawHistory=[],isFlipping=false;
-
-function setMode(m){
-  drawMode=m;
-  document.getElementById('btn-draw-mode').classList.toggle('active',m==='draw');
-  document.getElementById('btn-browse-mode').classList.toggle('active',m==='browse');
-  document.getElementById('draw-area').style.display=m==='draw'?'block':'none';
-  document.getElementById('draw-again-btn').style.display='none';
-  document.getElementById('browse-area').style.display=m==='browse'?'flex':'none';
-  document.getElementById('interpretation-area').style.display='none';
-  document.getElementById('history-section').style.display=m==='draw'&&drawHistory.length?'block':'none';
-  document.getElementById('single-input-wrap').style.display=m==='draw'?'block':'none';
-  if(m!=='draw') document.getElementById('single-intent').style.display='none';
-  if(m==='browse') renderBrowseCard();
-}
+let drawHistory=[],isFlipping=false,browseIdx=0;
 
 function drawCard(){
   if(isFlipping) return;
-  const qInput=document.getElementById('single-question');
-  const q=qInput.value.trim();
-  if(!q){
-    qInput.style.borderColor='#B91C1C';
-    qInput.placeholder='You must ask a question first...';
-    setTimeout(()=>{qInput.style.borderColor='#b8860b33';qInput.placeholder='Whisper your query to the void...'},2000);
-    return;
-  }
   isFlipping=true;
   const back=document.getElementById('card-back');
   back.style.transition='transform 0.28s ease';
@@ -466,13 +421,13 @@ function drawCard(){
       face.style.transition='transform 0.28s ease,opacity 0.28s ease';
       face.style.transform='rotateY(0deg)';face.style.opacity='1';
     });
+    // Show interpretation
+    document.getElementById('interpretation-text').textContent=getReading(card);
+    document.getElementById('interpretation-area').style.display='block';
     document.getElementById('draw-again-btn').style.display='inline-block';
-    const intent=document.getElementById('single-intent');
-    intent.textContent=`Regarding: "${q}"`;intent.style.display='block';
-    document.getElementById('single-input-wrap').style.display='none';
     drawHistory.unshift(card);if(drawHistory.length>5)drawHistory.pop();
-    renderHistory();isFlipping=false;
-    aiSingleReading(q,card);
+    renderHistory();
+    isFlipping=false;
   },290);
 }
 
@@ -486,11 +441,7 @@ function resetDraw(){
     back.style.display='flex';back.style.opacity='0';back.style.transition='opacity 0.25s';
     requestAnimationFrame(()=>{back.style.opacity='1';});
     document.getElementById('draw-again-btn').style.display='none';
-    document.getElementById('single-intent').style.display='none';
     document.getElementById('interpretation-area').style.display='none';
-    const qInput=document.getElementById('single-question');
-    qInput.value='';
-    document.getElementById('single-input-wrap').style.display='block';
   },260);
 }
 
@@ -498,10 +449,11 @@ function renderHistory(){
   const sec=document.getElementById('history-section');
   const chips=document.getElementById('history-chips');
   if(!drawHistory.length){sec.style.display='none';return;}
-  if(drawMode==='draw') sec.style.display='block';
+  sec.style.display='block';
   chips.innerHTML=drawHistory.map(c=>`<div class="history-chip" style="color:${c.color};border-color:${c.color}55;background:${c.color}11">${c.symbol} ${c.name}</div>`).join('');
 }
 
+// ── BROWSE ─────────────────────────────────────────────────────────────────
 function renderBrowseCard(){
   const card=CARDS[browseIdx];
   const el=document.getElementById('browse-card');
@@ -528,23 +480,12 @@ function setSpreadCard(i,state,card){
 
 function drawSpread(){
   if(spreadPhase==='spinning') return;
-  const qInput=document.getElementById('spread-question');
-  const q=qInput.value.trim();
-  if(!q){
-    qInput.style.borderColor='#B91C1C';
-    qInput.placeholder='The spread demands a question first...';
-    setTimeout(()=>{qInput.style.borderColor='#b8860b33';qInput.placeholder='What secrets shall the spread lay bare?'},2000);
-    return;
-  }
   clearInterval(slotInterval);
   spreadPhase='spinning';spreadCards=pickThree();
   document.getElementById('draw-spread-btn').disabled=true;
   document.getElementById('draw-spread-btn').textContent='READING...';
   document.getElementById('reset-spread-btn').style.display='none';
   document.getElementById('spread-interpretation-area').style.display='none';
-  const intent=document.getElementById('spread-intent');
-  intent.textContent=`Reading Spread For: "${q}"`;intent.style.display='block';
-  document.getElementById('spread-input-wrap').style.display='none';
   setSpreadCard(0,'spinning',null);setSpreadCard(1,'spinning',null);setSpreadCard(2,'spinning',null);
   slotInterval=setInterval(()=>{
     if(spreadPhase!=='spinning') return;
@@ -558,15 +499,13 @@ function drawSpread(){
     spreadPhase='done';
     document.getElementById('draw-spread-btn').style.display='none';
     document.getElementById('reset-spread-btn').style.display='inline-block';
-    aiSpreadReading(q,spreadCards);
+    document.getElementById('spread-interpretation-text').innerHTML=getSpreadReading(spreadCards);
+    document.getElementById('spread-interpretation-area').style.display='block';
   },3000);
 }
 
 function resetSpread(){
   spreadPhase='idle';spreadCards=[null,null,null];
-  document.getElementById('spread-question').value='';
-  document.getElementById('spread-input-wrap').style.display='block';
-  document.getElementById('spread-intent').style.display='none';
   document.getElementById('spread-interpretation-area').style.display='none';
   document.getElementById('draw-spread-btn').style.display='inline-block';
   document.getElementById('draw-spread-btn').disabled=false;
@@ -577,16 +516,29 @@ function resetSpread(){
 
 // ── PWA INSTALL ────────────────────────────────────────────────────────────
 let deferredInstall=null;
+
 window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();deferredInstall=e;
-  document.getElementById('install-banner').style.display='flex';
+  e.preventDefault();
+  deferredInstall=e;
+  document.getElementById('install-wrap').style.display='flex';
 });
+
 function doInstall(){
-  document.getElementById('install-banner').style.display='none';
-  if(deferredInstall){deferredInstall.prompt();deferredInstall=null;}
+  if(deferredInstall){
+    deferredInstall.prompt();
+    deferredInstall.userChoice.then(()=>{
+      deferredInstall=null;
+      document.getElementById('install-wrap').style.display='none';
+    });
+  } else {
+    // Fallback instructions for iOS or if prompt already fired
+    document.getElementById('install-hint').textContent='Tap your browser menu → "Add to Home Screen"';
+  }
 }
-function dismissInstall(){document.getElementById('install-banner').style.display='none';}
-window.addEventListener('appinstalled',()=>{document.getElementById('install-banner').style.display='none';});
+
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-wrap').style.display='none';
+});
 
 // ── SERVICE WORKER ─────────────────────────────────────────────────────────
 if('serviceWorker' in navigator){
