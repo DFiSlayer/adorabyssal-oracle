@@ -105,6 +105,12 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
 .primary-btn:active{background:#b8860b22}
 .primary-btn:disabled{opacity:.3;cursor:not-allowed}
 
+/* QUESTION BOX */
+.question-wrap{width:min(360px,92vw);margin:0 auto 16px}
+.question-box{width:100%;min-height:72px;resize:vertical;background:#08080f;border:1px solid #b8860b33;border-radius:8px;padding:12px;color:#f5e6c8;font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.5}
+.question-box:focus{outline:none;border-color:#b8860b;box-shadow:0 0 12px #b8860b22}
+.question-box::placeholder{color:#666}
+
 /* INSTALL BUTTON */
 #install-wrap{margin-top:24px;padding-bottom:32px;text-align:center;display:none;flex-direction:column;align-items:center;gap:8px}
 #install-btn{background:#b8860b11;border:1px solid #b8860b55;color:#b8860b;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;padding:10px 24px;border-radius:4px;cursor:pointer;transition:all .2s}
@@ -133,6 +139,9 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
     <div class="deck-sub">36-CARD CRYPTID DECK</div>
   </div>
   <div class="gold-line"></div>
+  <div class="question-wrap">
+    <textarea id="single-question" class="question-box" placeholder="Optional: Ask the Oracle a question..."></textarea>
+  </div>
   <div class="card-wrap">
     <div class="card card-back" id="card-back" onclick="drawCard()">
       <div class="card-back-icon">🌀</div>
@@ -164,6 +173,9 @@ body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min
     <div class="deck-sub">THREE-CARD SPREAD</div>
   </div>
   <div class="gold-line"></div>
+  <div class="question-wrap">
+    <textarea id="spread-question" class="question-box" placeholder="Optional: Ask the Oracle a question..."></textarea>
+  </div>
   <div class="spread-cards">
     <div class="spread-slot">
       <div class="spread-pos-label" style="color:#9333EA;text-shadow:0 0 8px #9333EA66">Past</div>
@@ -366,6 +378,32 @@ function getSpreadReading(cards) {
     </div>`).join('');
 }
 
+function getSynergyReading(cards, question="") {
+  const elements={},classes={};
+  let polarityScore=0;
+  cards.forEach(card=>{
+    elements[card.element]=(elements[card.element]||0)+1;
+    classes[card.classification]=(classes[card.classification]||0)+1;
+    if(card.positivity==="Positive") polarityScore++;
+    if(card.positivity==="Negative") polarityScore--;
+  });
+  const dominantElement=Object.keys(elements).sort((a,b)=>elements[b]-elements[a])[0];
+  const dominantClass=Object.keys(classes).sort((a,b)=>classes[b]-classes[a])[0];
+  const keywords=cards.map(c=>c.keyword);
+  let polarityText="";
+  if(polarityScore>1) polarityText="The overall current of this spread is strongly favorable.";
+  else if(polarityScore<-1) polarityText="The overall current of this spread contains significant challenges.";
+  else polarityText="The overall current of this spread is balanced and evolving.";
+  const elementTexts={Fire:"Fire dominates the reading. Action, transformation and momentum are central themes.",Water:"Water dominates the reading. Emotion, intuition and hidden currents shape the outcome.",Earth:"Earth dominates the reading. Stability, practicality and long-term growth are emphasized.",Air:"Air dominates the reading. Thought, communication and perception are driving forces."};
+  const classTexts={Cryptid:"The spread is rooted in tangible circumstances and real-world challenges.",Mythological:"The spread speaks through archetypal lessons and larger life themes.",Supernatural:"Hidden influences and unseen forces are strongly active."};
+  const narrative=`${keywords[0]} → ${keywords[1]} → ${keywords[2]}`;
+  let questionLayer="";
+  if(question.trim()!==""){
+    questionLayer=`<br><br><strong style="color:#b8860b99;font-style:normal;font-size:11px;letter-spacing:1px">QUESTION FOCUS</strong><br>The cards suggest your question should be approached through the sequence of ${keywords.join(", ")}. The answer is not contained in a single card but in how these energies evolve together.`;
+  }
+  return `<div class="spread-int-part"><span class="part-title" style="color:#b8860b">✦ DEEP SYNERGY ANALYSIS ✦</span><div class="part-text"><strong style="font-style:normal;color:#b8860b99;font-size:11px;letter-spacing:1px">NARRATIVE ARC</strong><br>${narrative}<br><br>${elementTexts[dominantElement]}<br><br>${classTexts[dominantClass]}<br><br>${polarityText}${questionLayer}</div></div>`;
+}
+
 // ── STARS ──────────────────────────────────────────────────────────────────
 (function(){
   const svg=document.getElementById('starfield');
@@ -421,8 +459,13 @@ function drawCard(){
       face.style.transition='transform 0.28s ease,opacity 0.28s ease';
       face.style.transform='rotateY(0deg)';face.style.opacity='1';
     });
-    // Show interpretation
-    document.getElementById('interpretation-text').textContent=getReading(card);
+    // Show interpretation with optional question focus
+    const question=document.getElementById('single-question').value||"";
+    let reading=getReading(card);
+    if(question.trim()!==""){
+      reading+="\n\nQuestion Focus:\nWhen viewed through your question, "+card.name+" emphasizes the lesson of "+card.keyword.toLowerCase()+".";
+    }
+    document.getElementById('interpretation-text').textContent=reading;
     document.getElementById('interpretation-area').style.display='block';
     document.getElementById('draw-again-btn').style.display='inline-block';
     drawHistory.unshift(card);if(drawHistory.length>5)drawHistory.pop();
@@ -499,7 +542,8 @@ function drawSpread(){
     spreadPhase='done';
     document.getElementById('draw-spread-btn').style.display='none';
     document.getElementById('reset-spread-btn').style.display='inline-block';
-    document.getElementById('spread-interpretation-text').innerHTML=getSpreadReading(spreadCards);
+    const spreadQ=document.getElementById('spread-question').value||"";
+    document.getElementById('spread-interpretation-text').innerHTML=getSpreadReading(spreadCards)+getSynergyReading(spreadCards,spreadQ);
     document.getElementById('spread-interpretation-area').style.display='block';
   },3000);
 }
