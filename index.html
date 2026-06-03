@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#050508">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Adorabyssal">
+<meta name="description" content="A 36-card cryptid oracle deck with AI-powered readings">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.svg">
+<title>Adorabyssal Oracle</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#050508;color:#f5e6c8;font-family:'Cormorant Garamond',serif;min-height:100vh;overflow-x:hidden}
+#starfield{position:fixed;inset:0;pointer-events:none;z-index:0}
+
+/* TABS */
+#tabbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;background:#080810;border-bottom:1px solid #b8860b33}
+.tab-btn{flex:1;padding:14px 4px;background:transparent;border:none;font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;color:#444;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.tab-btn.active{color:#b8860b;border-bottom:2px solid #b8860b;background:#b8860b11}
+
+/* SCREENS */
+.screen{display:none;padding-top:56px;min-height:100vh;position:relative;z-index:1}
+.screen.active{display:flex;flex-direction:column;align-items:center}
+
+/* HEADER */
+.deck-header{text-align:center;padding:24px 20px 12px}
+.deck-title{font-family:'Cinzel',serif;color:#b8860b;font-size:clamp(15px,4vw,20px);letter-spacing:4px;margin-bottom:4px}
+.deck-sub{color:#444;font-size:11px;letter-spacing:3px}
+.gold-line{width:180px;height:1px;background:linear-gradient(90deg,transparent,#b8860b44,transparent);margin:10px auto 16px}
+
+/* INPUT */
+.oracle-input-container{width:min(320px,85vw);margin-bottom:18px;text-align:center}
+.oracle-input{width:100%;padding:10px 14px;background:#0b0b14;border:1px solid #b8860b33;border-radius:6px;color:#f5e6c8;font-family:'Cormorant Garamond',serif;font-size:14px;text-align:center;outline:none;transition:border-color .3s,box-shadow .3s}
+.oracle-input:focus{border-color:#b8860b;box-shadow:0 0 10px #b8860b22}
+.oracle-input::placeholder{color:#555;font-style:italic;letter-spacing:1px}
+.intent-display{font-style:italic;color:#b8860b99;font-size:13px;margin:10px auto;max-width:280px;text-align:center;line-height:1.4;animation:glowReveal .5s ease}
+
+/* INTERPRETATION BOX */
+.interpretation-box{width:min(360px,92vw);background:#08080f;border:1px solid #b8860b22;padding:18px 16px;margin:14px 0 8px;border-radius:10px;box-shadow:0 4px 24px #000000cc;animation:glowReveal .6s ease}
+.int-title{font-family:'Cinzel',serif;font-size:11px;color:#b8860b;letter-spacing:3px;margin-bottom:10px;text-align:center;text-transform:uppercase}
+.int-text{font-size:15px;color:#d4c5a9;line-height:1.7;text-align:center}
+.int-text p{margin-bottom:10px}
+.int-text p:last-child{margin-bottom:0}
+.int-loading{display:flex;align-items:center;justify-content:center;gap:10px;color:#b8860b77;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px}
+.int-dot{width:6px;height:6px;border-radius:50%;background:#b8860b;animation:dotPulse 1.2s ease-in-out infinite}
+.int-dot:nth-child(2){animation-delay:.2s}
+.int-dot:nth-child(3){animation-delay:.4s}
+
+/* SPREAD INTERPRETATION */
+.spread-int-part{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #ffffff0d}
+.spread-int-part:last-child{margin-bottom:0;border-bottom:none;padding-bottom:0}
+.part-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;margin-bottom:6px;display:block}
+.part-text{font-size:14px;color:#c8b99a;line-height:1.65}
+
+/* MODE TOGGLE */
+.mode-toggle{display:flex;border:1px solid #b8860b44;border-radius:8px;overflow:hidden;margin-bottom:20px}
+.mode-btn{padding:9px 18px;background:transparent;border:none;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:#444;cursor:pointer;transition:all .2s}
+.mode-btn.active{background:#b8860b22;color:#b8860b}
+
+/* CARDS */
+.card-wrap{perspective:800px;margin-bottom:16px}
+.card{width:min(230px,72vw);border-radius:16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;padding:16px 14px 12px;position:relative;overflow:hidden;transition:transform .28s ease;user-select:none}
+.card-back{height:min(340px,106vw);background:linear-gradient(135deg,#0d0d1a 0%,#1a0a2e 50%,#0d0d1a 100%);border:2px solid #b8860b;box-shadow:0 0 30px #b8860b55,inset 0 0 30px #00000088;justify-content:center;gap:10px}
+.card-back-icon{font-size:clamp(36px,10vw,52px);filter:drop-shadow(0 0 8px gold)}
+.card-back-label{font-family:'Cinzel',serif;color:#b8860b;font-size:12px;letter-spacing:3px;text-align:center;line-height:1.6}
+.card-back-hint{font-family:'Cormorant Garamond',serif;color:#555;font-size:11px;letter-spacing:2px}
+.card-face{border:2px solid;min-height:min(420px,131vw)}
+.cf-top{text-align:center;width:100%;margin-bottom:8px}
+.cf-el-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.cf-el-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px}
+.cf-badges{display:flex;gap:4px}
+.badge{font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:10px;border:1px solid;font-family:'Cinzel',serif}
+.cf-line{height:1px;background:linear-gradient(90deg,transparent,currentColor,transparent);opacity:.5;margin:4px 0}
+.cf-mid{text-align:center;margin:8px 0}
+.cf-symbol{font-size:clamp(44px,13vw,60px);display:block;margin-bottom:6px}
+.cf-name{font-family:'Cinzel',serif;color:#f5e6c8;font-size:clamp(13px,4vw,17px);letter-spacing:2px;margin-bottom:4px;line-height:1.3;text-align:center}
+.cf-divider{width:40px;height:1px;margin:0 auto 6px}
+.cf-keyword{font-size:clamp(18px,5.5vw,24px);font-style:italic;letter-spacing:1px}
+.cf-lore{font-size:clamp(11px,3.2vw,13px);color:#aaa;line-height:1.55;text-align:center;margin-top:10px;padding:8px 4px;border-top:1px solid #ffffff11}
+.cf-bottom{text-align:center;margin-top:8px}
+.cf-num{font-size:9px;color:#444;letter-spacing:2px}
+.ghost-btn{background:transparent;border:1px solid #b8860b55;color:#b8860b;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;padding:9px 22px;cursor:pointer;border-radius:4px;transition:all .2s;margin-bottom:8px}
+.ghost-btn:active{background:#b8860b22}
+.browse-nav{display:flex;align-items:center;gap:16px;margin-top:8px}
+.nav-btn{width:38px;height:38px;border-radius:50%;background:transparent;border:1px solid #b8860b55;color:#b8860b;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.nav-btn:active{background:#b8860b22}
+.nav-count{font-family:'Cinzel',serif;color:#555;font-size:11px;letter-spacing:2px}
+.history-section{margin-top:20px;text-align:center;padding-bottom:28px;width:100%;max-width:400px;padding-left:16px;padding-right:16px}
+.history-label{color:#333;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;margin-bottom:10px}
+.history-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.history-chip{padding:4px 12px;border-radius:20px;font-size:12px;border:1px solid}
+
+/* SPREAD */
+.spread-cards{display:flex;gap:clamp(6px,2.5vw,14px);align-items:flex-start;justify-content:center;flex-wrap:nowrap;padding:0 10px;width:100%}
+.spread-slot{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;max-width:clamp(110px,30vw,170px)}
+.spread-pos-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+.spread-card{width:100%;border-radius:12px;border:2px solid;padding:10px 8px 8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;transition:all .5s ease;position:relative;overflow:hidden;min-height:clamp(160px,48vw,260px)}
+.slot-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:5px;width:100%}
+.slot-symbol{font-size:clamp(26px,7.5vw,38px)}
+.slot-name{font-family:'Cinzel',serif;font-size:clamp(6px,1.8vw,9px);letter-spacing:1px;text-align:center;opacity:.8}
+.idle-icon{font-size:22px;opacity:.2}
+.idle-text{font-family:'Cinzel',serif;font-size:8px;letter-spacing:2px;opacity:.3}
+.sc-top{text-align:center;width:100%}
+.sc-el{font-family:'Cinzel',serif;font-size:7px;letter-spacing:1px}
+.sc-line{height:1px;margin:3px 0;opacity:.5}
+.sc-symbol{font-size:clamp(28px,8.5vw,42px);display:block;margin:4px 0;text-align:center}
+.sc-name{font-family:'Cinzel',serif;color:#f5e6c8;font-size:clamp(7px,2.2vw,11px);letter-spacing:1px;text-align:center;line-height:1.3;margin-bottom:3px}
+.sc-kw{font-size:clamp(12px,3.5vw,16px);font-style:italic;text-align:center;margin-bottom:3px}
+.sc-badges{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-top:3px}
+.sc-badge{font-size:6px;padding:1px 4px;border-radius:8px;border:1px solid;font-family:'Cinzel',serif;letter-spacing:.5px}
+.sc-lore{font-size:clamp(8px,2.2vw,10px);color:#999;line-height:1.4;text-align:center;margin-top:5px;padding-top:5px;border-top:1px solid #ffffff0f}
+.sc-num{font-size:7px;color:#444;letter-spacing:1px;font-family:'Cinzel',serif;margin-top:4px}
+.controls{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;padding:0 16px}
+.primary-btn{padding:11px 24px;border:1px solid #b8860b;color:#b8860b;background:transparent;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;cursor:pointer;border-radius:4px;transition:all .2s}
+.primary-btn:active{background:#b8860b22}
+.primary-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* INSTALL BANNER */
+#install-banner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0d0d1a;border-top:1px solid #b8860b44;padding:12px 16px;flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+#install-banner span{font-family:'Cormorant Garamond',serif;font-size:13px;color:#b8860b99;flex:1}
+#install-banner button{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;padding:7px 14px;border-radius:4px;cursor:pointer}
+#install-yes{background:#b8860b22;border:1px solid #b8860b;color:#b8860b}
+#install-no{background:transparent;border:1px solid #333;color:#444}
+
+@keyframes slotSpin{0%{transform:translateY(-3px);opacity:.6}50%{transform:translateY(3px);opacity:1}100%{transform:translateY(-3px);opacity:.6}}
+@keyframes glowReveal{0%{opacity:0;transform:scale(0.95)}100%{opacity:1;transform:scale(1)}}
+@keyframes dotPulse{0%,80%,100%{transform:scale(0);opacity:.3}40%{transform:scale(1);opacity:1}}
+.spinning-anim{animation:slotSpin .1s linear infinite}
+.reveal-anim{animation:glowReveal .4s ease forwards}
+</style>
+</head>
+<body>
+<svg id="starfield"></svg>
+
+<div id="tabbar">
+  <button class="tab-btn active" onclick="switchTab('single',this)">⟡ Single Draw</button>
+  <button class="tab-btn" onclick="switchTab('spread',this)">✦ 3-Card Spread</button>
+</div>
+
+<!-- SINGLE DRAW -->
+<div class="screen active" id="screen-single">
+  <div class="deck-header">
+    <div class="deck-title">ADORABYSSAL ORACLE</div>
+    <div class="deck-sub">36-CARD CRYPTID DECK</div>
+  </div>
+  <div class="gold-line"></div>
+  <div class="oracle-input-container" id="single-input-wrap">
+    <input type="text" id="single-question" class="oracle-input" placeholder="Whisper your query to the void...">
+  </div>
+  <div id="single-intent" class="intent-display" style="display:none"></div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btn-draw-mode" onclick="setMode('draw')">⟡ Draw</button>
+    <button class="mode-btn" id="btn-browse-mode" onclick="setMode('browse')">☰ Browse</button>
+  </div>
+  <div id="draw-area" class="card-wrap">
+    <div class="card card-back" id="card-back" onclick="drawCard()">
+      <div class="card-back-icon">🌀</div>
+      <div class="card-back-label">ADORABYSSAL<br>ORACLE</div>
+      <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,#b8860b,transparent)"></div>
+      <div class="card-back-hint">DRAW A CARD</div>
+    </div>
+    <div class="card card-face" id="card-face" style="display:none"></div>
+  </div>
+  <div id="interpretation-area" class="interpretation-box" style="display:none">
+    <div class="int-title">✦ The Void Speaks ✦</div>
+    <div class="int-text" id="interpretation-text"></div>
+  </div>
+  <button class="ghost-btn" id="draw-again-btn" style="display:none" onclick="resetDraw()">↩ DRAW AGAIN</button>
+  <div id="browse-area" style="display:none;flex-direction:column;align-items:center;gap:12px">
+    <div class="card card-face" id="browse-card"></div>
+    <div class="browse-nav">
+      <button class="nav-btn" onclick="browseNav(-1)">‹</button>
+      <span class="nav-count" id="browse-count">1 / 36</span>
+      <button class="nav-btn" onclick="browseNav(1)">›</button>
+    </div>
+  </div>
+  <div class="history-section" id="history-section" style="display:none">
+    <div class="history-label">RECENT DRAWS</div>
+    <div class="history-chips" id="history-chips"></div>
+  </div>
+</div>
+
+<!-- SPREAD SCREEN -->
+<div class="screen" id="screen-spread">
+  <div class="deck-header">
+    <div class="deck-title">ADORABYSSAL ORACLE</div>
+    <div class="deck-sub">THREE-CARD SPREAD</div>
+  </div>
+  <div class="gold-line"></div>
+  <div class="oracle-input-container" id="spread-input-wrap">
+    <input type="text" id="spread-question" class="oracle-input" placeholder="What secrets shall the spread lay bare?">
+  </div>
+  <div id="spread-intent" class="intent-display" style="display:none"></div>
+  <div class="spread-cards">
+    <div class="spread-slot">
+      <div class="spread-pos-label" style="color:#9333EA;text-shadow:0 0 8px #9333EA66">Past</div>
+      <div class="spread-card" style="border-color:#9333EA33;background:#0d0d1a;opacity:.5" id="scard0">
+        <div class="slot-inner"><div class="idle-icon">✦</div><div class="idle-text" style="color:#9333EA">WAITING</div></div>
+      </div>
+    </div>
+    <div class="spread-slot">
+      <div class="spread-pos-label" style="color:#D97706;text-shadow:0 0 8px #D9770666">Present</div>
+      <div class="spread-card" style="border-color:#D9770633;background:#0d0d1a;opacity:.5" id="scard1">
+        <div class="slot-inner"><div class="idle-icon">✦</div><div class="idle-text" style="color:#D97706">WAITING</div></div>
+      </div>
+    </div>
+    <div class="spread-slot">
+      <div class="spread-pos-label" style="color:#16A34A;text-shadow:0 0 8px #16A34A66">Future</div>
+      <div class="spread-card" style="border-color:#16A34A33;background:#0d0d1a;opacity:.5" id="scard2">
+        <div class="slot-inner"><div class="idle-icon">✦</div><div class="idle-text" style="color:#16A34A">WAITING</div></div>
+      </div>
+    </div>
+  </div>
+  <div id="spread-interpretation-area" class="interpretation-box" style="display:none;margin-top:20px">
+    <div class="int-title">✦ Timeline Synthesis ✦</div>
+    <div class="int-text" id="spread-interpretation-text"></div>
+  </div>
+  <div class="controls">
+    <button class="primary-btn" id="draw-spread-btn" onclick="drawSpread()">✦ DRAW SPREAD</button>
+    <button class="primary-btn" id="reset-spread-btn" style="display:none;border-color:#555;color:#aaa" onclick="resetSpread()">↩ CLEAR SPREAD</button>
+  </div>
+  <div style="height:32px"></div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div id="install-banner">
+  <span>📲 Install Adorabyssal Oracle to your home screen</span>
+  <button id="install-yes" onclick="doInstall()">INSTALL</button>
+  <button id="install-no" onclick="dismissInstall()">✕</button>
+</div>
+
+<script>
+// ── CARD DATA ──────────────────────────────────────────────────────────────
+const CARDS=[
+{id:1,name:"Alkonost",keyword:"Distraction",symbol:"🦅",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#B91C1C",lore:"A Slavic half-bird, half-woman with a spellbinding voice. Those who hear it forget and abandon everything else. She can cause thunderstorms by laying eggs that roll into the ocean and hatch after seven days."},
+{id:2,name:"Anansi",keyword:"Story",symbol:"🕷️",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#A855F7",lore:"A trickster spider god from Akan folktales, considered the spirit of all stories and knowledge. Associated with skill at speechcraft and seen as a symbol of slave resistance and survival."},
+{id:3,name:"Bækhest",keyword:"Glamour",symbol:"🐎",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#92400E",lore:"A Scandinavian brook horse similar to a Kelpie — an unnaturally glamorous white horse appearing near rivers in fog. Anyone who climbs on becomes stuck and is dragged into the river."},
+{id:4,name:"Bake-Kujira",keyword:"Misfortune",symbol:"🐋",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#6B21A8",lore:"A floating Japanese ghost whale that cannot be caught and brings a curse and misfortune wherever it goes. Appears as the skeleton of a great baleen whale, accompanied by strange birds and unknown fish."},
+{id:5,name:"Bigfoot",keyword:"Solitude",symbol:"🦶",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#3F6212",lore:"From North American folklore, particularly the Pacific Northwest. A hairy, upright-walking ape creature between six and nine feet tall, wandering forests and leaving massive footprints."},
+{id:6,name:"Black Shuck",keyword:"Omen",symbol:"🐾",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#78716C",lore:"A ghostly black dog from East Anglia with one fiery evil eye. Its most notorious appearance: bursting through church doors with a clap of thunder, leaving scorch marks and causing the steeple to collapse."},
+{id:7,name:"Cadejo",keyword:"Duality",symbol:"🐺",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#6366F1",lore:"A pair of spirits from Central American folklore — one a protector, the other a malevolent being luring people to bad choices. Which is good and which is evil swaps depending on the source. Together they represent duality."},
+{id:8,name:"Cait Sidhe",keyword:"Theft",symbol:"🐱",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#8B5CF6",lore:"A spectral Celtic fairie creature haunting the Scottish highlands. Appears as a large black cat with a white chest spot. Rumored to steal the souls of the dead before burial."},
+{id:9,name:"Cerberus",keyword:"Duty",symbol:"🐕",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#991B1B",lore:"From Greek mythology — usually three-headed with a serpent for a tail and snakes protruding from its body. Guards the gates of the underworld to prevent the dead from leaving."},
+{id:10,name:"Chupacabra",keyword:"Consume",symbol:"🦎",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#7C3AED",lore:"A cryptid with sightings in Puerto Rico, Chile, and across the southern US and Mexico. Reported to prey on livestock, draining them of blood and organs, leaving three puncture wounds as evidence."},
+{id:11,name:"Demon",keyword:"Chaos",symbol:"🔱",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#581C87",lore:"Originally a divine Greek being, now recognized as a malevolent entity born of human sin. Heavily associated with goat-men (satyrs), said to corrupt and lead astray the souls of men."},
+{id:12,name:"Dullahan",keyword:"Inevitability",symbol:"☠️",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#6B7280",lore:"From Irish mythology — a headless rider on a black horse, holding its own head under one arm. All gates open before it; when it stops, a human dies. It speaks only once per journey, to call the name of the doomed."},
+{id:13,name:"Fairie",keyword:"Trickery",symbol:"🧚",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#065F46",lore:"A mythical creature from European folklore — a magical being associated with trickery and the need to be warded off. Pre-Victorian depictions: diminutive and wingless, able to change its appearance and size."},
+{id:14,name:"Fuath",keyword:"Malice",symbol:"👾",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#064E3B",lore:"A malevolent Gaelic water spirit resembling a gremlin. Delights in causing drownings by sabotaging boats. Vulnerable to steel and sunlight — only comes out at night. Humanoid with webbed toes, a spiky tail, and a shaggy mane."},
+{id:15,name:"Ghost",keyword:"Endure",symbol:"👻",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#92400E",lore:"A generic soul or spirit of the dead that appears to the living. Depiction varies — translucent or glowing presence associated with the afterlife. Often considered a restless spirit unable to move on."},
+{id:16,name:"Grootslang",keyword:"Cruelty",symbol:"🐘",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#9B4D4D",lore:"An ancient creature as old as the world, made by mistake before the gods had experience. Split into elephants and snakes, one original escaped. Lives deep in a South African cave filled with diamonds. Impossibly strong and cruel — overcome only by appealing to its greed."},
+{id:17,name:"Huginn & Muninn",keyword:"Knowledge",symbol:"🪶",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#374151",lore:"Named after Thought and Memory — a pair of ravens from Norse Mythology that fly across the world daily and report back to Odin. Through them, Odin maintains his wisdom and knowledge of all things."},
+{id:18,name:"Hydra",keyword:"Struggle",symbol:"🐍",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#134E4A",lore:"A multi-headed serpent from Greek mythology whose lair was a lake thought to be an entrance to the underworld. Cut off one head and two grow back. Its blood was dangerously poisonous."},
+{id:19,name:"Ifrit",keyword:"Power",symbol:"😈",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#C2410C",lore:"A Middle Eastern Jinn, often depicted as the most powerful of them — wicked and ruthless. Said to inhabit the underworld with fiery flames leaping from its mouth."},
+{id:20,name:"Jersey Devil",keyword:"Invulnerability",symbol:"👹",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#9B1C1C",lore:"From the Pine Barrens of Southern New Jersey — the thirteenth child of Jane Leeds, transformed into a hooved winged creature at birth. Emits an unearthly shriek and is said to be impossible to kill."},
+{id:21,name:"Kitsune",keyword:"Wisdom",symbol:"🦊",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#1E3A8A",lore:"A Japanese spirit fox with the ability to shapeshift into human form. Depicted as trickster, guardian, friend, and lover. The more tails a Kitsune has — up to nine — the older and wiser it is considered to be."},
+{id:22,name:"Kraken",keyword:"Mystery",symbol:"🐙",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#4338CA",lore:"A giant sea cephalopod said to lurk off Norway and Greenland. So massive it has been mistaken for an island. When it submerges it leaves giant whirlpools capable of sinking ships."},
+{id:23,name:"Lampad",keyword:"Companionship",symbol:"🕯️",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#86198F",lore:"Nymphs of the underworld from Greek Mythology, meant to accompany Hecate and light her way. They carry torches with the power to drive mortals into madness."},
+{id:24,name:"Leviathan",keyword:"Envy",symbol:"🌊",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#0369A1",lore:"A giant sea monster from Jewish belief — a monstrous serpent to be killed at the end of time. Described by St. Thomas Aquinas as the demon of Envy, corresponding to the deadly sin."},
+{id:25,name:"Mermaid",keyword:"Commitment",symbol:"🧜",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#1E3A5F",lore:"A creature from the folklore of multiple cultures, depicted as female with a fish's tail. If a mermaid falls in love and her man weds another, she turns to sea foam. If they marry and he is unfaithful, he will die."},
+{id:26,name:"Mothman",keyword:"Ruin",symbol:"🦟",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#7F1D1D",lore:"A cryptid from West Virginia folklore — a dark birdlike humanoid with oversized glowing red eyes and a large wingspan. Associated with supernatural events in the mid-sixties ending with the collapse of the Silver Bridge."},
+{id:27,name:"Namazu",keyword:"Control",symbol:"🐟",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Supernatural",positivity:"Neutral",posColor:"#9CA3AF",color:"#7C2D12",lore:"A giant catfish from Japanese mythology living in the mud under Japan, restrained by the god Kashima with a stone. When Kashima is distracted, Namazu thrashes and causes violent earthquakes."},
+{id:28,name:"Nessie",keyword:"Longevity",symbol:"🦕",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#0E7490",lore:"The Loch Ness Monster from Scottish folklore — often depicted as a plesiosaur with a long neck and small head. Sightings date back to the sixth century, making Nessie very long lived indeed."},
+{id:29,name:"Olgoi-Khorkhoi",keyword:"Virulence",symbol:"🪱",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Cryptid",positivity:"Negative",posColor:"#F87171",color:"#9F1239",lore:"The Mongolian Death Worm. A giant red worm claimed to live in the Gobi Desert with no head or legs — impossibly poisonous, capable of spraying venom and electricity, traveling underground."},
+{id:30,name:"Olitiau",keyword:"Expanse",symbol:"🦇",element:"Air",elSymbol:"△",elColor:"#60A5FA",classification:"Cryptid",positivity:"Neutral",posColor:"#9CA3AF",color:"#BE185D",lore:"From Central Africa — claimed to be gigantic bats lurking in caverns with big black bodies, long teeth, and six to twelve foot wingspans. One explorer called it the granddaddy of all bats."},
+{id:31,name:"Phoenix",keyword:"Rebirth",symbol:"🔥",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Mythological",positivity:"Positive",posColor:"#4ADE80",color:"#DC2626",lore:"A regenerative bird from Greek mythology that dies in a combustion of flame and is reborn from the ash. Red and yellow coloration, ranging in size from eagle to ostrich."},
+{id:32,name:"Rusalka",keyword:"Constrained",symbol:"💀",element:"Water",elSymbol:"▽",elColor:"#38BDF8",classification:"Mythological",positivity:"Negative",posColor:"#F87171",color:"#164E63",lore:"A female water entity from Eastern Slavic folklore. Originally believed to help crops grow, they later became vengeful undead spirits lurking near rivers and entangling young men with their long red hair to drown them."},
+{id:33,name:"Sleipnir",keyword:"Swiftness",symbol:"🏇",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Mythological",positivity:"Neutral",posColor:"#9CA3AF",color:"#4C1D95",lore:"Odin's horse from Norse Mythology, depicted with eight legs and incredible speed. An offspring of Loki with a connection to the underworld. Described as the best horse among gods and men."},
+{id:34,name:"Tsuchinoko",keyword:"Lies",symbol:"🐛",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Supernatural",positivity:"Negative",posColor:"#F87171",color:"#14532D",lore:"A Western Japanese being resembling a hoop snake. Sometimes takes its tail in its mouth and rolls around. Able to double jump, with an affinity for lying and a taste for alcohol."},
+{id:35,name:"Will-O'-The-Wisp",keyword:"Guidance",symbol:"✨",element:"Fire",elSymbol:"△",elColor:"#F97316",classification:"Supernatural",positivity:"Positive",posColor:"#4ADE80",color:"#1D4ED8",lore:"A widely shared tale of a flickering orb of light said to be a spirit guiding travellers — sometimes to ill fate, sometimes to good. Often associated with fairies, goblins, and hauntings."},
+{id:36,name:"Wolpertinger",keyword:"Diversity",symbol:"🐇",element:"Earth",elSymbol:"▽",elColor:"#34D399",classification:"Cryptid",positivity:"Positive",posColor:"#4ADE80",color:"#1E40AF",lore:"A diverse creature from Bavarian folklore with a composite body — squirrel body, pheasant wings, rabbit head, and deer antlers. Claims to inhabit the alpine forests of Bavaria."}
+];
+
+const POSITIONS=[{label:"Past",accent:"#9333EA"},{label:"Present",accent:"#D97706"},{label:"Future",accent:"#16A34A"}];
+const ELEMENT_ASSOC={Fire:"Action, passion, desire, energy, destruction",Air:"Thought, travel, intellect, communication, divination",Earth:"Stability, prosperity, home, nature, endurance",Water:"Emotions, dreams, love, healing, rest"};
+
+// ── STARS ──────────────────────────────────────────────────────────────────
+(function(){
+  const svg=document.getElementById('starfield');
+  svg.setAttribute('width','100%');svg.setAttribute('height','100%');
+  for(let i=0;i<80;i++){
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',Math.random()*100+'%');c.setAttribute('cy',Math.random()*100+'%');
+    c.setAttribute('r',(Math.random()*1.5+0.5));c.setAttribute('fill','gold');c.setAttribute('opacity','0.2');
+    const a=document.createElementNS('http://www.w3.org/2000/svg','animate');
+    a.setAttribute('attributeName','opacity');a.setAttribute('values','0.05;0.5;0.05');
+    a.setAttribute('dur',(2+Math.random()*3)+'s');a.setAttribute('repeatCount','indefinite');
+    a.setAttribute('begin',(Math.random()*4)+'s');
+    c.appendChild(a);svg.appendChild(c);
+  }
+})();
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function switchTab(tab,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── CARD HTML ──────────────────────────────────────────────────────────────
+function fullCardHTML(card){
+  return`<div class="cf-top"><div class="cf-el-row"><div class="cf-el-label" style="color:${card.elColor}">${card.elSymbol} ${card.element}</div><div class="cf-badges"><span class="badge" style="color:${card.elColor};border-color:${card.elColor}55">${card.classification}</span><span class="badge" style="color:${card.posColor};border-color:${card.posColor}55">${card.positivity}</span></div></div><div class="cf-line" style="color:${card.color}"></div></div><div class="cf-mid"><span class="cf-symbol">${card.symbol}</span><div class="cf-name">${card.name}</div><div class="cf-divider" style="background:linear-gradient(90deg,transparent,${card.color},transparent)"></div><div class="cf-keyword" style="color:${card.color}">${card.keyword}</div></div><div class="cf-lore">${card.lore}</div><div class="cf-bottom"><div class="cf-num">ADORABYSSAL · ${card.id}/36</div></div>`;
+}
+function applyCardFace(el,card){
+  el.innerHTML=fullCardHTML(card);
+  el.style.background=`linear-gradient(160deg,#0d0d1a 0%,${card.color}22 60%,#0d0d1a 100%)`;
+  el.style.borderColor=card.color;
+  el.style.boxShadow=`0 0 28px ${card.color}66,inset 0 0 20px #00000066`;
+}
+
+// ── AI READING (Claude API) ────────────────────────────────────────────────
+function loadingHTML(){
+  return`<div class="int-loading"><div class="int-dot"></div><div class="int-dot"></div><div class="int-dot"></div><span style="margin-left:6px">The void stirs...</span></div>`;
+}
+
+async function aiSingleReading(question, card){
+  const box=document.getElementById('interpretation-text');
+  box.innerHTML=loadingHTML();
+  document.getElementById('interpretation-area').style.display='block';
+
+  const prompt=`You are the Adorabyssal Oracle — a mystical, atmospheric divination voice that speaks with poetic gravity and genuine insight. You are reading for someone who has asked:
+
+"${question}"
+
+The card drawn is: ${card.name} (${card.keyword})
+Element: ${card.element} — associated with: ${ELEMENT_ASSOC[card.element]}
+Classification: ${card.classification}
+Positivity: ${card.positivity}
+Lore: ${card.lore}
+
+Give a genuine, personal, flowing oracle reading of 3–4 short paragraphs that:
+1. Opens with an evocative line connecting the creature's nature to the question
+2. Interprets the card's keyword and element in direct relation to their specific question
+3. Offers a concrete intuitive insight or guidance (not vague platitudes)
+4. Closes with a resonant, memorable line
+
+Speak in second person ("you", "your"). Be atmospheric but clear. Do not use asterisks or markdown. Do not list things. Write as continuous flowing prose.`;
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:500,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'The void is silent. Try again.';
+    box.innerHTML=text.split('\n\n').filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('');
+  } catch(e) {
+    box.innerHTML=`<p style="color:#9CA3AF;font-style:italic">The connection to the void was lost. Try again.</p>`;
+  }
+}
+
+async function aiSpreadReading(question, cards){
+  const box=document.getElementById('spread-interpretation-text');
+  box.innerHTML=loadingHTML();
+  document.getElementById('spread-interpretation-area').style.display='block';
+
+  const prompt=`You are the Adorabyssal Oracle — a mystical, atmospheric divination voice that speaks with poetic gravity and genuine insight. You are reading a Past · Present · Future spread for someone who has asked:
+
+"${question}"
+
+The three cards drawn are:
+PAST: ${cards[0].name} (${cards[0].keyword}, ${cards[0].element}, ${cards[0].positivity}) — ${cards[0].lore}
+PRESENT: ${cards[1].name} (${cards[1].keyword}, ${cards[1].element}, ${cards[1].positivity}) — ${cards[1].lore}
+FUTURE: ${cards[2].name} (${cards[2].keyword}, ${cards[2].element}, ${cards[2].positivity}) — ${cards[2].lore}
+
+Give a genuine, cohesive three-part oracle reading. For each position write 2–3 sentences that:
+- Connect the creature's actual folklore/nature to their question
+- Interpret the keyword and element meaningfully in context
+- Flow together as a coherent narrative arc (past shapes present, present shapes future)
+
+Format your response exactly as:
+PAST: [reading]
+PRESENT: [reading]
+FUTURE: [reading]
+
+Speak in second person. Be atmospheric but grounded. No asterisks or markdown. No generic platitudes — be specific to the cards drawn.`;
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'';
+    const colors=['#9333EA','#D97706','#16A34A'];
+    const labels=['The Foundation (Past)','The Nexus (Present)','The Horizon (Future)'];
+    const parts=text.split(/\n/).filter(l=>l.trim()).reduce((acc,line)=>{
+      const m=line.match(/^(PAST|PRESENT|FUTURE):\s*(.*)/i);
+      if(m) acc.push({pos:m[1].toUpperCase(),text:m[2]});
+      else if(acc.length) acc[acc.length-1].text+=' '+line.trim();
+      return acc;
+    },[]);
+
+    if(parts.length>=3){
+      box.innerHTML=parts.map((p,i)=>`
+        <div class="spread-int-part">
+          <span class="part-title" style="color:${colors[i]}">${labels[i]}</span>
+          <div class="part-text">${p.text}</div>
+        </div>`).join('');
+    } else {
+      // fallback: split by double newline
+      const chunks=text.split('\n\n').filter(c=>c.trim());
+      box.innerHTML=chunks.slice(0,3).map((c,i)=>`
+        <div class="spread-int-part">
+          <span class="part-title" style="color:${colors[i]}">${labels[i]}</span>
+          <div class="part-text">${c.replace(/^(PAST|PRESENT|FUTURE):\s*/i,'')}</div>
+        </div>`).join('');
+    }
+  } catch(e){
+    box.innerHTML=`<p style="color:#9CA3AF;font-style:italic">The connection to the void was lost. Try again.</p>`;
+  }
+}
+
+// ── SINGLE DRAW ────────────────────────────────────────────────────────────
+let drawMode='draw',browseIdx=0,drawHistory=[],isFlipping=false;
+
+function setMode(m){
+  drawMode=m;
+  document.getElementById('btn-draw-mode').classList.toggle('active',m==='draw');
+  document.getElementById('btn-browse-mode').classList.toggle('active',m==='browse');
+  document.getElementById('draw-area').style.display=m==='draw'?'block':'none';
+  document.getElementById('draw-again-btn').style.display='none';
+  document.getElementById('browse-area').style.display=m==='browse'?'flex':'none';
+  document.getElementById('interpretation-area').style.display='none';
+  document.getElementById('history-section').style.display=m==='draw'&&drawHistory.length?'block':'none';
+  document.getElementById('single-input-wrap').style.display=m==='draw'?'block':'none';
+  if(m!=='draw') document.getElementById('single-intent').style.display='none';
+  if(m==='browse') renderBrowseCard();
+}
+
+function drawCard(){
+  if(isFlipping) return;
+  const qInput=document.getElementById('single-question');
+  const q=qInput.value.trim();
+  if(!q){
+    qInput.style.borderColor='#B91C1C';
+    qInput.placeholder='You must ask a question first...';
+    setTimeout(()=>{qInput.style.borderColor='#b8860b33';qInput.placeholder='Whisper your query to the void...'},2000);
+    return;
+  }
+  isFlipping=true;
+  const back=document.getElementById('card-back');
+  back.style.transition='transform 0.28s ease';
+  back.style.transform='rotateY(90deg)';
+  setTimeout(()=>{
+    const card=CARDS[Math.floor(Math.random()*CARDS.length)];
+    const face=document.getElementById('card-face');
+    applyCardFace(face,card);
+    back.style.display='none';back.style.transform='';
+    face.style.display='flex';face.style.opacity='0';face.style.transform='rotateY(-90deg)';
+    requestAnimationFrame(()=>{
+      face.style.transition='transform 0.28s ease,opacity 0.28s ease';
+      face.style.transform='rotateY(0deg)';face.style.opacity='1';
+    });
+    document.getElementById('draw-again-btn').style.display='inline-block';
+    const intent=document.getElementById('single-intent');
+    intent.textContent=`Regarding: "${q}"`;intent.style.display='block';
+    document.getElementById('single-input-wrap').style.display='none';
+    drawHistory.unshift(card);if(drawHistory.length>5)drawHistory.pop();
+    renderHistory();isFlipping=false;
+    aiSingleReading(q,card);
+  },290);
+}
+
+function resetDraw(){
+  const face=document.getElementById('card-face');
+  face.style.transition='transform 0.25s ease,opacity 0.25s ease';
+  face.style.transform='rotateY(90deg)';face.style.opacity='0';
+  setTimeout(()=>{
+    face.style.display='none';face.style.transform='';
+    const back=document.getElementById('card-back');
+    back.style.display='flex';back.style.opacity='0';back.style.transition='opacity 0.25s';
+    requestAnimationFrame(()=>{back.style.opacity='1';});
+    document.getElementById('draw-again-btn').style.display='none';
+    document.getElementById('single-intent').style.display='none';
+    document.getElementById('interpretation-area').style.display='none';
+    const qInput=document.getElementById('single-question');
+    qInput.value='';
+    document.getElementById('single-input-wrap').style.display='block';
+  },260);
+}
+
+function renderHistory(){
+  const sec=document.getElementById('history-section');
+  const chips=document.getElementById('history-chips');
+  if(!drawHistory.length){sec.style.display='none';return;}
+  if(drawMode==='draw') sec.style.display='block';
+  chips.innerHTML=drawHistory.map(c=>`<div class="history-chip" style="color:${c.color};border-color:${c.color}55;background:${c.color}11">${c.symbol} ${c.name}</div>`).join('');
+}
+
+function renderBrowseCard(){
+  const card=CARDS[browseIdx];
+  const el=document.getElementById('browse-card');
+  applyCardFace(el,card);
+  document.getElementById('browse-count').textContent=`${browseIdx+1} / 36`;
+}
+function browseNav(dir){browseIdx=(browseIdx+dir+36)%36;renderBrowseCard();}
+
+// ── THREE-CARD SPREAD ──────────────────────────────────────────────────────
+let spreadPhase='idle',spreadCards=[null,null,null],slotInterval=null;
+
+function pickThree(){return[...CARDS].sort(()=>Math.random()-0.5).slice(0,3);}
+function spreadSpinHTML(card,accent){return`<div class="slot-inner spinning-anim"><div class="slot-symbol">${card.symbol}</div><div class="slot-name" style="color:${accent}">${card.name}</div></div>`;}
+function spreadRevealHTML(card){return`<div class="sc-top"><div class="sc-el" style="color:${card.elColor}">${card.elSymbol} ${card.element}</div><div class="sc-line" style="background:${card.color}"></div></div><div class="reveal-anim" style="text-align:center;width:100%"><span class="sc-symbol">${card.symbol}</span><div class="sc-name">${card.name}</div><div style="width:24px;height:1px;background:linear-gradient(90deg,transparent,${card.color},transparent);margin:3px auto"></div><div class="sc-kw" style="color:${card.color}">${card.keyword}</div><div class="sc-badges"><span class="sc-badge" style="color:${card.elColor};border-color:${card.elColor}44">${card.classification}</span><span class="sc-badge" style="color:${card.posColor};border-color:${card.posColor}44">${card.positivity}</span></div><div class="sc-lore">${card.lore}</div></div><div class="sc-num">#${card.id}/36</div>`;}
+
+function setSpreadCard(i,state,card){
+  const el=document.getElementById('scard'+i);
+  const accent=POSITIONS[i].accent;
+  el.className='spread-card';
+  if(state==='idle'){el.style.borderColor=accent+'33';el.style.background='#0d0d1a';el.style.boxShadow='none';el.style.opacity='.5';el.innerHTML=`<div class="slot-inner"><div class="idle-icon">✦</div><div class="idle-text" style="color:${accent}">WAITING</div></div>`;}
+  else if(state==='spinning'){el.style.borderColor=accent+'66';el.style.background='#0d0d1a';el.style.boxShadow=`0 0 15px ${accent}44`;el.style.opacity='1';el.innerHTML=spreadSpinHTML(CARDS[Math.floor(Math.random()*36)],accent);}
+  else if(state==='revealed'){el.style.borderColor=card.color;el.style.background=`linear-gradient(160deg,#0d0d1a 0%,${card.color}22 60%,#0d0d1a 100%)`;el.style.boxShadow=`0 0 22px ${card.color}88,0 0 44px ${card.color}33`;el.style.opacity='1';el.innerHTML=spreadRevealHTML(card);}
+}
+
+function drawSpread(){
+  if(spreadPhase==='spinning') return;
+  const qInput=document.getElementById('spread-question');
+  const q=qInput.value.trim();
+  if(!q){
+    qInput.style.borderColor='#B91C1C';
+    qInput.placeholder='The spread demands a question first...';
+    setTimeout(()=>{qInput.style.borderColor='#b8860b33';qInput.placeholder='What secrets shall the spread lay bare?'},2000);
+    return;
+  }
+  clearInterval(slotInterval);
+  spreadPhase='spinning';spreadCards=pickThree();
+  document.getElementById('draw-spread-btn').disabled=true;
+  document.getElementById('draw-spread-btn').textContent='READING...';
+  document.getElementById('reset-spread-btn').style.display='none';
+  document.getElementById('spread-interpretation-area').style.display='none';
+  const intent=document.getElementById('spread-intent');
+  intent.textContent=`Reading Spread For: "${q}"`;intent.style.display='block';
+  document.getElementById('spread-input-wrap').style.display='none';
+  setSpreadCard(0,'spinning',null);setSpreadCard(1,'spinning',null);setSpreadCard(2,'spinning',null);
+  slotInterval=setInterval(()=>{
+    if(spreadPhase!=='spinning') return;
+    for(let i=0;i<3;i++){const el=document.getElementById('scard'+i);if(el.querySelector('.spinning-anim')){el.innerHTML=spreadSpinHTML(CARDS[Math.floor(Math.random()*36)],POSITIONS[i].accent);}}
+  },90);
+  setTimeout(()=>{setSpreadCard(0,'revealed',spreadCards[0]);},1200);
+  setTimeout(()=>{setSpreadCard(1,'revealed',spreadCards[1]);},2100);
+  setTimeout(()=>{
+    clearInterval(slotInterval);
+    setSpreadCard(2,'revealed',spreadCards[2]);
+    spreadPhase='done';
+    document.getElementById('draw-spread-btn').style.display='none';
+    document.getElementById('reset-spread-btn').style.display='inline-block';
+    aiSpreadReading(q,spreadCards);
+  },3000);
+}
+
+function resetSpread(){
+  spreadPhase='idle';spreadCards=[null,null,null];
+  document.getElementById('spread-question').value='';
+  document.getElementById('spread-input-wrap').style.display='block';
+  document.getElementById('spread-intent').style.display='none';
+  document.getElementById('spread-interpretation-area').style.display='none';
+  document.getElementById('draw-spread-btn').style.display='inline-block';
+  document.getElementById('draw-spread-btn').disabled=false;
+  document.getElementById('draw-spread-btn').textContent='✦ DRAW SPREAD';
+  document.getElementById('reset-spread-btn').style.display='none';
+  setSpreadCard(0,'idle',null);setSpreadCard(1,'idle',null);setSpreadCard(2,'idle',null);
+}
+
+// ── PWA INSTALL ────────────────────────────────────────────────────────────
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstall=e;
+  document.getElementById('install-banner').style.display='flex';
+});
+function doInstall(){
+  document.getElementById('install-banner').style.display='none';
+  if(deferredInstall){deferredInstall.prompt();deferredInstall=null;}
+}
+function dismissInstall(){document.getElementById('install-banner').style.display='none';}
+window.addEventListener('appinstalled',()=>{document.getElementById('install-banner').style.display='none';});
+
+// ── SERVICE WORKER ─────────────────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>

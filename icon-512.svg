@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#050508"/>
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#b8860b" stroke-width="3" opacity="0.4"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#b8860b" stroke-width="1.5" opacity="0.2"/>
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#b8860b" stroke-width="1" opacity="0.1"/>
+  <text x="256" y="310" text-anchor="middle" font-size="180" fill="#b8860b" opacity="0.9">🌀</text>
+  <text x="256" y="400" text-anchor="middle" font-family="serif" font-size="28" fill="#b8860b" letter-spacing="8">ADORABYSSAL</text>
+  <text x="256" y="434" text-anchor="middle" font-family="serif" font-size="18" fill="#b8860b" opacity="0.5" letter-spacing="4">ORACLE</text>
+</svg>
